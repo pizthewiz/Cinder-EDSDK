@@ -24,11 +24,11 @@ typedef std::shared_ptr<class Camera> CameraRef;
 
 class Camera : public std::enable_shared_from_this<Camera> {
 public:
-    static CameraRef create();
 	~Camera();
 
-protected:
-    Camera();
+private:
+    static CameraRef create(EdsCameraRef camera);
+    Camera(EdsCameraRef camera);
 
     EdsCameraRef mCamera;
 };

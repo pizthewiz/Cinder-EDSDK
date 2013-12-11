@@ -10,14 +10,22 @@
 
 namespace Cinder { namespace EDSDK {
 
-CameraRef Camera::create() {
-    return CameraRef(new Camera())->shared_from_this();
+CameraRef Camera::create(EdsCameraRef camera) {
+    return CameraRef(new Camera(camera))->shared_from_this();
 }
 
-Camera::Camera() {
+Camera::Camera(EdsCameraRef camera) {
+    if (camera == NULL) {
+        throw cinder::Exception();
+    }
+
+    EdsRetain(camera);
+    mCamera = camera;
 }
 
 Camera::~Camera() {
+    EdsRelease(mCamera);
+    mCamera = NULL;
 }
 
 }}
