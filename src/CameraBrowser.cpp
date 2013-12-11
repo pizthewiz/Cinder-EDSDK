@@ -15,9 +15,41 @@ CameraBrowserRef CameraBrowser::create() {
 }
 
 CameraBrowser::CameraBrowser() {
+    mIsBrowsing = false;
 }
 
 CameraBrowser::~CameraBrowser() {
+    // TODO - disconnect handler
+
+    mCameras.clear();
+}
+
+bool CameraBrowser::isBrowsing() const {
+    return mIsBrowsing;
+}
+
+void CameraBrowser::start() {
+    if (mIsBrowsing) {
+        return;
+    }
+
+    // TODO - start
+
+    mIsBrowsing = true;
+}
+
+void CameraBrowser::stop() {
+    if (!mIsBrowsing) {
+        return;
+    }
+
+    // TODO - stop
+
+    mIsBrowsing = false;
+}
+
+const std::vector<CameraRef> CameraBrowser::getCameras() const {
+    return mCameras;
 }
 
 }}
