@@ -20,6 +20,8 @@
 
 namespace Cinder { namespace EDSDK {
 
+class CameraBrowser;
+
 // expected device handler functions:
 //  didRemoveCamera
 //  didOpenSessionWithError
@@ -47,6 +49,8 @@ private:
 
     EdsCameraRef mCamera;
     EdsDeviceInfo mDeviceInfo;
+
+    friend class CameraBrowser;
 };
 
 }}

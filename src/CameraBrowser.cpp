@@ -14,12 +14,6 @@ using namespace std;
 
 namespace Cinder { namespace EDSDK {
 
-static EdsError handleCameraAdded(EdsVoid* inContext) {
-    // TODO - which camera?
-//    CameraBrowser* cameraBrowser = (CameraBrowser*)inContext;
-    return EDS_ERR_OK;
-}
-
 CameraBrowserRef CameraBrowser::create() {
 	return CameraBrowserRef(new CameraBrowser())->shared_from_this();
 }
@@ -29,6 +23,7 @@ CameraBrowser::CameraBrowser() {
 
     EdsError error = EdsInitializeSDK();
     if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to initialize SDK" << endl;
         throw Exception();
     }
 }
@@ -40,6 +35,7 @@ CameraBrowser::~CameraBrowser() {
 
     EdsError error = EdsTerminateSDK();
     if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to terminate SDK cleanly" << endl;
         throw Exception();
     }
 }
@@ -55,6 +51,32 @@ void CameraBrowser::start() {
 //
 //    mIsBrowsing = true;
 
+    EdsError error = EdsSetCameraAddedHandler(CameraBrowser::handleCameraAdded, this);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to set camera added handler" << endl;
+    }
+
+    enumerateCameraList();
+    // TODO - didEnumerateCameras
+}
+
+//void CameraBrowser::stop() {
+//    if (!mIsBrowsing) {
+//        return;
+//    }
+//
+//    // TODO - stop
+//
+//    mIsBrowsing = false;
+//}
+
+const vector<CameraRef>& CameraBrowser::getCameras() const {
+    return mCameras;
+}
+
+#pragma mark - PRIVATE
+
+void CameraBrowser::enumerateCameraList() {
     EdsCameraListRef cameraList = NULL;
     EdsError error = EdsGetCameraList(&cameraList);
     if (error != EDS_ERR_OK) {
@@ -63,15 +85,15 @@ void CameraBrowser::start() {
         return;
     }
 
-	EdsUInt32 count = 0;
-    error = EdsGetChildCount(cameraList, &count);
+	EdsUInt32 cameraCount = 0;
+    error = EdsGetChildCount(cameraList, &cameraCount);
     if (error != EDS_ERR_OK) {
         console() << "ERROR - failed to get camera count" << endl;
         EdsRelease(cameraList);
         return;
     }
 
-    for (uint32_t idx = 0; idx <count; idx++) {
+    for (uint32_t idx = 0; idx < cameraCount; idx++) {
         EdsCameraRef cam = NULL;
         error = EdsGetChildAtIndex(cameraList, idx, &cam);
         if (error != EDS_ERR_OK) {
@@ -88,33 +110,23 @@ void CameraBrowser::start() {
         }
         EdsRelease(cam);
 
-        mCameras.push_back(camera);
+        // add if previously unknown
+        if (any_of(mCameras.begin(), mCameras.end(), [camera](CameraRef c) { return strcmp(c->mDeviceInfo.szPortName, camera->mDeviceInfo.szPortName) == 0; })) {
+            mCameras.push_back(camera);
 
-        // TODO - didAddCamera
+            // TODO - didAddCamera
+        }
     }
 
     EdsRelease(cameraList);
-
-    // TODO - didEnumerateCameras
-
-    error = EdsSetCameraAddedHandler(handleCameraAdded, this);
-    if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed set camera added handler" << endl;
-    }
 }
 
-//void CameraBrowser::stop() {
-//    if (!mIsBrowsing) {
-//        return;
-//    }
-//
-//    // TODO - stop
-//
-//    mIsBrowsing = false;
-//}
+#pragma mark - CALLBACKS
 
-const vector<CameraRef>& CameraBrowser::getCameras() const {
-    return mCameras;
+EdsError EDSCALLBACK CameraBrowser::handleCameraAdded(EdsVoid* inContext) {
+    // we are left to our own devices to determine which camera was added
+    ((CameraBrowser*)inContext)->enumerateCameraList();
+    return EDS_ERR_OK;
 }
 
 }}

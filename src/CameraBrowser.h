@@ -32,6 +32,9 @@ public:
 
 private:
     CameraBrowser();
+    void enumerateCameraList();
+
+    static EdsError EDSCALLBACK handleCameraAdded(EdsVoid* inContext);
 
 //    bool mIsBrowsing;
     std::vector<CameraRef> mCameras;
