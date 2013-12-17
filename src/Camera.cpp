@@ -8,6 +8,10 @@
 
 #include "Camera.h"
 
+using namespace ci;
+using namespace ci::app;
+using namespace std;
+
 namespace Cinder { namespace EDSDK {
 
 CameraRef Camera::create(EdsCameraRef camera) {
@@ -16,7 +20,7 @@ CameraRef Camera::create(EdsCameraRef camera) {
 
 Camera::Camera(EdsCameraRef camera) {
     if (camera == NULL) {
-        throw cinder::Exception();
+        throw Exception();
     }
 
     EdsRetain(camera);
@@ -29,6 +33,8 @@ Camera::Camera(EdsCameraRef camera) {
 }
 
 Camera::~Camera() {
+    // TODO - disconnect handler
+
     EdsRelease(mCamera);
     mCamera = NULL;
 }

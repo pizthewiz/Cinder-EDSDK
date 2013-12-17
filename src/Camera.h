@@ -20,12 +20,27 @@
 
 namespace Cinder { namespace EDSDK {
 
+// expected device handler functions:
+//  didRemoveCamera
+//  didOpenSessionWithError
+//  didBecomeReady
+//  didCloseSessionWithError
+//  didAddFile
+//  didDownloadFile
+
 typedef std::shared_ptr<class Camera> CameraRef;
 
 class Camera : public std::enable_shared_from_this<Camera> {
 public:
     static CameraRef create(EdsCameraRef camera);
 	~Camera();
+
+    bool hasOpenSession() const;
+    void requestOpenSession();
+    void requestCloseSession();
+
+    void requestTakePicture();
+    void requestDownloadFile();
 
 private:
     Camera(EdsCameraRef camera);
