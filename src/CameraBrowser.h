@@ -24,16 +24,16 @@ public:
     static CameraBrowserRef create();
 	~CameraBrowser();
 
-    bool isBrowsing() const;
+//    bool isBrowsing() const;
     void start();
-    void stop();
+//    void stop();
 
-    const std::vector<CameraRef> getCameras() const;
+    const std::vector<CameraRef>& getCameras() const;
 
 private:
     CameraBrowser();
 
-    bool mIsBrowsing;
+//    bool mIsBrowsing;
     std::vector<CameraRef> mCameras;
 };
 
