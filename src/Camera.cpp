@@ -21,6 +21,11 @@ Camera::Camera(EdsCameraRef camera) {
 
     EdsRetain(camera);
     mCamera = camera;
+
+    EdsError error = EdsGetDeviceInfo(mCamera, &mDeviceInfo);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to get device info" << endl;
+    }
 }
 
 Camera::~Camera() {

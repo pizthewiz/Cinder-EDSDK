@@ -31,6 +31,7 @@ private:
     Camera(EdsCameraRef camera);
 
     EdsCameraRef mCamera;
+    EdsDeviceInfo mDeviceInfo;
 };
 
 }}
