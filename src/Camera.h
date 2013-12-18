@@ -25,10 +25,10 @@ class CameraBrowser;
 // expected device handler functions:
 //  didRemoveCamera
 //  didOpenSessionWithError
-//  didBecomeReady
 //  didCloseSessionWithError
 //  didAddFile
 //  didDownloadFile
+//  didReadFile
 
 typedef std::shared_ptr<class Camera> CameraRef;
 
@@ -43,6 +43,7 @@ public:
 
     void requestTakePicture();
     void requestDownloadFile();
+    void requestReadFile();
 
 private:
     Camera(EdsCameraRef camera);
