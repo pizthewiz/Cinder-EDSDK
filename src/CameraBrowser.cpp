@@ -19,7 +19,7 @@ CameraBrowserRef CameraBrowser::create() {
 }
 
 CameraBrowser::CameraBrowser() {
-//    mIsBrowsing = false;
+    mIsBrowsing = false;
 
     EdsError error = EdsInitializeSDK();
     if (error != EDS_ERR_OK) {
@@ -45,11 +45,11 @@ CameraBrowser::~CameraBrowser() {
 //}
 
 void CameraBrowser::start() {
-//    if (mIsBrowsing) {
-//        return;
-//    }
-//
-//    mIsBrowsing = true;
+    if (mIsBrowsing) {
+        return;
+    }
+
+    mIsBrowsing = true;
 
     EdsError error = EdsSetCameraAddedHandler(CameraBrowser::handleCameraAdded, this);
     if (error != EDS_ERR_OK) {

@@ -36,7 +36,7 @@ private:
 
     static EdsError EDSCALLBACK handleCameraAdded(EdsVoid* inContext);
 
-//    bool mIsBrowsing;
+    bool mIsBrowsing;
     std::vector<CameraRef> mCameras;
 };
 
