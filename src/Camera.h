@@ -24,8 +24,8 @@ class CameraBrowser;
 
 // expected device handler functions:
 //  didRemoveCamera
-//  didOpenSessionWithError
-//  didCloseSessionWithError
+//  didOpenSessionWithError (possibly not needed)
+//  didCloseSessionWithError (possibly not needed)
 //  didAddFile
 //  didDownloadFile
 //  didReadFile
@@ -41,7 +41,7 @@ public:
     void requestOpenSession();
     void requestCloseSession();
 
-    void requestTakePicture();
+    void requestTakePicture(/*options*/);
     void requestDownloadFile();
     void requestReadFile();
 

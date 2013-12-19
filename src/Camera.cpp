@@ -55,6 +55,42 @@ Camera::~Camera() {
     mCamera = NULL;
 }
 
+bool Camera::hasOpenSession() const {
+    return mHasOpenSession;
+}
+
+void Camera::requestOpenSession() {
+    if (mHasOpenSession) {
+        return;
+    }
+
+    EdsError error = EdsOpenSession(mCamera);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to open camera session" << endl;
+    }
+
+    mHasOpenSession = (error == EDS_ERR_OK);
+    // TODO - didOpenSessionWithError
+
+    // TODO - could return error instead of didOpenSessionWithError
+}
+
+void Camera::requestCloseSession() {
+    if (!mHasOpenSession) {
+        return;
+    }
+
+    EdsError error = EdsCloseSession(mCamera);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to close camera session" << endl;
+    }
+
+    mHasOpenSession = !(error == EDS_ERR_OK);
+    // TODO - didCloseSessionWithError
+
+    // TODO - could return error instead of didCloseSessionWithError
+}
+
 #pragma mark - CALLBACKS
 
 EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inRef, EdsVoid* inContext) {
