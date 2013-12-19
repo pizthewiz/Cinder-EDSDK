@@ -30,6 +30,22 @@ Camera::Camera(EdsCameraRef camera) {
     if (error != EDS_ERR_OK) {
         console() << "ERROR - failed to get device info" << endl;
     }
+
+    mHasOpenSession = false;
+
+    // set event handlers
+    error = EdsSetObjectEventHandler(mCamera, kEdsObjectEvent_All, Camera::handleObjectEvent, this);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to set object event handler" << endl;
+    }
+    error = EdsSetPropertyEventHandler(mCamera, kEdsPropertyEvent_All, Camera::handlePropertyEvent, this);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to set property event handler" << endl;
+    }
+    error = EdsSetCameraStateEventHandler(mCamera, kEdsStateEvent_All, Camera::handleStateEvent, this);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to set object event handler" << endl;
+    }
 }
 
 Camera::~Camera() {
@@ -37,6 +53,20 @@ Camera::~Camera() {
 
     EdsRelease(mCamera);
     mCamera = NULL;
+}
+
+#pragma mark - CALLBACKS
+
+EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inRef, EdsVoid* inContext) {
+    return EDS_ERR_OK;
+}
+
+EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 inPropertyID, EdsUInt32 inParam, EdsVoid* inContext) {
+    return EDS_ERR_OK;
+}
+
+EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inParam, EdsVoid* inContext) {
+    return EDS_ERR_OK;
 }
 
 }}
