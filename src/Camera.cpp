@@ -50,6 +50,10 @@ Camera::Camera(EdsCameraRef camera) {
 Camera::~Camera() {
     // TODO - disconnect handler
 
+    if (mHasOpenSession) {
+        requestCloseSession();
+    }
+
     EdsRelease(mCamera);
     mCamera = NULL;
 }
