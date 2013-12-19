@@ -10,7 +10,6 @@
 
 using namespace ci;
 using namespace ci::app;
-using namespace std;
 
 namespace Cinder { namespace EDSDK {
 
@@ -28,7 +27,7 @@ Camera::Camera(EdsCameraRef camera) {
 
     EdsError error = EdsGetDeviceInfo(mCamera, &mDeviceInfo);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to get device info" << endl;
+        console() << "ERROR - failed to get device info" << std::endl;
     }
 
     mHasOpenSession = false;
@@ -36,15 +35,15 @@ Camera::Camera(EdsCameraRef camera) {
     // set event handlers
     error = EdsSetObjectEventHandler(mCamera, kEdsObjectEvent_All, Camera::handleObjectEvent, this);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to set object event handler" << endl;
+        console() << "ERROR - failed to set object event handler" << std::endl;
     }
     error = EdsSetPropertyEventHandler(mCamera, kEdsPropertyEvent_All, Camera::handlePropertyEvent, this);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to set property event handler" << endl;
+        console() << "ERROR - failed to set property event handler" << std::endl;
     }
     error = EdsSetCameraStateEventHandler(mCamera, kEdsStateEvent_All, Camera::handleStateEvent, this);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to set object event handler" << endl;
+        console() << "ERROR - failed to set object event handler" << std::endl;
     }
 }
 
@@ -66,7 +65,7 @@ void Camera::requestOpenSession() {
 
     EdsError error = EdsOpenSession(mCamera);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to open camera session" << endl;
+        console() << "ERROR - failed to open camera session" << std::endl;
     }
 
     mHasOpenSession = (error == EDS_ERR_OK);
@@ -82,7 +81,7 @@ void Camera::requestCloseSession() {
 
     EdsError error = EdsCloseSession(mCamera);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to close camera session" << endl;
+        console() << "ERROR - failed to close camera session" << std::endl;
     }
 
     mHasOpenSession = !(error == EDS_ERR_OK);
