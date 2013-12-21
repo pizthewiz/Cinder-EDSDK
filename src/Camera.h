@@ -37,6 +37,8 @@ public:
     static CameraRef create(EdsCameraRef camera);
 	~Camera();
 
+    std::string getName() const;
+
     bool hasOpenSession() const;
     void requestOpenSession();
     void requestCloseSession();

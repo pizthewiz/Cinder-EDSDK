@@ -58,6 +58,12 @@ Camera::~Camera() {
     mCamera = NULL;
 }
 
+#pragma mark -
+
+std::string Camera::getName() const {
+    return std::string(mDeviceInfo.szPortName);
+}
+
 bool Camera::hasOpenSession() const {
     return mHasOpenSession;
 }
