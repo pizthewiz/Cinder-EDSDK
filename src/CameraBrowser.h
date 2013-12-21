@@ -12,16 +12,18 @@
 
 namespace Cinder { namespace EDSDK {
 
-// expected browser handler functions:
-//  didAddCamera
-//  didRemoveCamera
-//  didEnumerateCameras
-
 typedef std::shared_ptr<class CameraBrowser> CameraBrowserRef;
+
+class CameraBrowserHandler {
+public:
+    virtual void didAddCamera(CameraBrowserRef cameraBrowser, CameraRef camera) = 0;
+    virtual void didRemoveCamera(CameraBrowserRef cameraBrowser, CameraRef camera) = 0;
+    virtual void didEnumerateCameras(CameraBrowserRef cameraBrowser) = 0;
+};
 
 class CameraBrowser : public std::enable_shared_from_this<CameraBrowser> {
 public:
-    static CameraBrowserRef create();
+    static CameraBrowserRef create(CameraBrowserHandler* handler);
 	~CameraBrowser();
 
 //    bool isBrowsing() const;
@@ -31,13 +33,14 @@ public:
     const std::vector<CameraRef>& getCameras() const;
 
 private:
-    CameraBrowser();
+    CameraBrowser(CameraBrowserHandler* handler);
     void enumerateCameraList();
 
     static EdsError EDSCALLBACK handleCameraAdded(EdsVoid* inContext);
 
     bool mIsBrowsing;
     std::vector<CameraRef> mCameras;
+    CameraBrowserHandler* mHandler;
 };
 
 }}

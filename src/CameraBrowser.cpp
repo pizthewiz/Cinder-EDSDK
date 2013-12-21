@@ -13,12 +13,14 @@ using namespace ci::app;
 
 namespace Cinder { namespace EDSDK {
 
-CameraBrowserRef CameraBrowser::create() {
-	return CameraBrowserRef(new CameraBrowser())->shared_from_this();
+CameraBrowserRef CameraBrowser::create(CameraBrowserHandler* handler) {
+	return CameraBrowserRef(new CameraBrowser(handler))->shared_from_this();
 }
 
-CameraBrowser::CameraBrowser() {
+CameraBrowser::CameraBrowser(CameraBrowserHandler* handler) {
     mIsBrowsing = false;
+
+    mHandler = handler;
 
     EdsError error = EdsInitializeSDK();
     if (error != EDS_ERR_OK) {
@@ -56,7 +58,7 @@ void CameraBrowser::start() {
     }
 
     enumerateCameraList();
-    // TODO - didEnumerateCameras
+    mHandler->didEnumerateCameras((CameraBrowserRef)this);
 }
 
 //void CameraBrowser::stop() {
@@ -113,7 +115,7 @@ void CameraBrowser::enumerateCameraList() {
         if (std::any_of(mCameras.begin(), mCameras.end(), [camera](CameraRef c) { return strcmp(c->mDeviceInfo.szPortName, camera->mDeviceInfo.szPortName) == 0; })) {
             mCameras.push_back(camera);
 
-            // TODO - didAddCamera
+            mHandler->didAddCamera((CameraBrowserRef)this, camera);
         }
     }
 
