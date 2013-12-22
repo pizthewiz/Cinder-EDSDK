@@ -2,26 +2,25 @@
 `Cinder-EDSDK` is a [CinderBlock](http://libcinder.org/) to interact with a Canon dSLR.
 
 ## FEATURES
-Image capture to memory or on-disk, camera keep-alive, simultaneous multiple camera control, camera connect and disconnect callbacks…
+Image capture to memory or on-disk, camera keep-alive, simultaneous control of multiple cameras, camera connect and disconnect callbacks…
 
 ## EXAMPLE
 ```C++
 void CaptureApp::setup() {
-    mCameraBrowser = Cinder::EDSDK::CameraBrowser::create();
-    // TODO - mCameraBrowser.setCallbackTarget(this);
+    mCameraBrowser = Cinder::EDSDK::CameraBrowser::create(this);
     mCameraBrowser->start();
 }
 
-void CaptureApp::didAddCamera(Cinder::EDSDK::CameraBrowserRef cameraBrowser, Cinder::EDSDK::CameraRef camera) {
+void CaptureApp::didAddCamera(Cinder::EDSDK::CameraBrowser* cameraBrowser, Cinder::EDSDK::CameraRef camera) {
     mCamera = camera;
-    // TODO - mCamera.setCallbackTarget(this);
+    mCamera.setHandler(this);
     EdsError error = mCamera->requestOpenSession();
     if (error == EDS_ERR_OK) {
         mCamera->requestTakePicture();
     }
 }
 
-void CaptureApp::didAddFile(Cinder::EDSDK::CameraRef camera, Cinder::EDSDK::CameraFileRef file) {
+void CaptureApp::didAddFile(Cinder::EDSDK::Camera* camera, Cinder::EDSDK::CameraFileRef file) {
     // TODO - more stuff
 }
 ```
