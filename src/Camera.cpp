@@ -131,11 +131,19 @@ EdsError Camera::requestCloseSession() {
     return EDS_ERR_OK;
 }
 
-EdsError Camera::requestTakePicture(/*Options* options*/) {
-    return EDS_ERR_UNIMPLEMENTED;
+EdsError Camera::requestTakePicture() {
+    if (!mHasOpenSession) {
+        return EDS_ERR_SESSION_NOT_OPEN;
+    }
+
+    EdsError error = EdsSendCommand(mCamera, kEdsCameraCommand_TakePicture, 0);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to take picture" << std::endl;
+    }
+    return error;
 }
 
-EdsError Camera::requestDownloadFile() {
+EdsError Camera::requestDownloadFile(EdsDirectoryItemRef directoryItem) {
     return EDS_ERR_UNIMPLEMENTED;
 }
 
