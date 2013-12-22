@@ -24,7 +24,7 @@ typedef std::shared_ptr<class Camera> CameraRef;
 
 class CameraHandler {
 public:
-//    virtual void didRemoveCamera(Camera* camera) = 0;
+    virtual void didRemoveCamera(Camera* camera) = 0;
 //    virtual void didAddFile(Camera* camera, void* file) = 0;
 //    virtual void didDownloadFile(Camera* camera, void* file, void* something) = 0;
 //    virtual void didReadFile(Camera* camera, void* file, void* something) = 0;
