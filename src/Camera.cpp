@@ -28,6 +28,7 @@ Camera::Camera(EdsCameraRef camera) {
     EdsError error = EdsGetDeviceInfo(mCamera, &mDeviceInfo);
     if (error != EDS_ERR_OK) {
         console() << "ERROR - failed to get device info" << std::endl;
+        // TODO - NULL out mDeviceInfo
     }
 
     mHasOpenSession = false;
@@ -48,7 +49,7 @@ Camera::Camera(EdsCameraRef camera) {
 }
 
 Camera::~Camera() {
-    // TODO - disconnect handler
+    mHandler = NULL;
 
     if (mHasOpenSession) {
         requestCloseSession();
@@ -60,44 +61,64 @@ Camera::~Camera() {
 
 #pragma mark -
 
+CameraHandler* Camera::getHandler() const {
+    return mHandler;
+}
+
+void Camera::setHandler(CameraHandler* handler) {
+    mHandler = handler;
+}
+
+#pragma mark -
+
 std::string Camera::getName() const {
-    return std::string(mDeviceInfo.szPortName);
+    return std::string(mDeviceInfo.szDeviceDescription);
 }
 
 bool Camera::hasOpenSession() const {
     return mHasOpenSession;
 }
 
-void Camera::requestOpenSession() {
+EdsError Camera::requestOpenSession() {
     if (mHasOpenSession) {
-        return;
+        return EDS_ERR_SESSION_ALREADY_OPEN;
     }
 
     EdsError error = EdsOpenSession(mCamera);
     if (error != EDS_ERR_OK) {
         console() << "ERROR - failed to open camera session" << std::endl;
+        return error;
     }
 
-    mHasOpenSession = (error == EDS_ERR_OK);
-    // TODO - didOpenSessionWithError
-
-    // TODO - could return error instead of didOpenSessionWithError
+    mHasOpenSession = true;
+    return EDS_ERR_OK;
 }
 
-void Camera::requestCloseSession() {
+EdsError Camera::requestCloseSession() {
     if (!mHasOpenSession) {
-        return;
+        return EDS_ERR_SESSION_NOT_OPEN;
     }
 
     EdsError error = EdsCloseSession(mCamera);
     if (error != EDS_ERR_OK) {
         console() << "ERROR - failed to close camera session" << std::endl;
+        return error;
     }
 
-    mHasOpenSession = !(error == EDS_ERR_OK);
-    // TODO - didCloseSessionWithError
+    mHasOpenSession = false;
+    return EDS_ERR_OK;
+}
 
-    // TODO - could return error instead of didCloseSessionWithError
+EdsError Camera::requestTakePicture(/*Options* options*/) {
+    return EDS_ERR_UNIMPLEMENTED;
+}
+
+EdsError Camera::requestDownloadFile() {
+    return EDS_ERR_UNIMPLEMENTED;
+}
+
+EdsError Camera::requestReadFile() {
+    return EDS_ERR_UNIMPLEMENTED;
 }
 
 #pragma mark - CALLBACKS

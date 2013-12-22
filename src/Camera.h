@@ -22,30 +22,33 @@ namespace Cinder { namespace EDSDK {
 
 class CameraBrowser;
 
-// expected device handler functions:
-//  didRemoveCamera
-//  didOpenSessionWithError (possibly not needed)
-//  didCloseSessionWithError (possibly not needed)
-//  didAddFile
-//  didDownloadFile
-//  didReadFile
-
 typedef std::shared_ptr<class Camera> CameraRef;
+
+class CameraHandler {
+public:
+//    virtual void didRemoveCamera(CameraRef camera) = 0;
+//    virtual void didAddFile(CameraRef camera, void* file) = 0;
+//    virtual void didDownloadFile(CameraRef camera, void* file, void* something) = 0;
+//    virtual void didReadFile(CameraRef camera, void* file, void* something) = 0;
+};
 
 class Camera : public std::enable_shared_from_this<Camera> {
 public:
     static CameraRef create(EdsCameraRef camera);
 	~Camera();
 
+    CameraHandler* getHandler() const;
+    void setHandler(CameraHandler* handler);
+
     std::string getName() const;
 
     bool hasOpenSession() const;
-    void requestOpenSession();
-    void requestCloseSession();
+    EdsError requestOpenSession();
+    EdsError requestCloseSession();
 
-    void requestTakePicture(/*options*/);
-    void requestDownloadFile();
-    void requestReadFile();
+    EdsError requestTakePicture(/*Options* options*/);
+    EdsError requestDownloadFile();
+    EdsError requestReadFile();
 
 private:
     Camera(EdsCameraRef camera);
@@ -54,6 +57,7 @@ private:
     static EdsError EDSCALLBACK handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 inPropertyID, EdsUInt32 inParam, EdsVoid* inContext);
     static EdsError EDSCALLBACK handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inParam, EdsVoid* inContext);
 
+    CameraHandler* mHandler;
     EdsCameraRef mCamera;
     EdsDeviceInfo mDeviceInfo;
     bool mHasOpenSession;
