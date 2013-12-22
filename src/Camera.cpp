@@ -159,6 +159,7 @@ EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inPar
             }
             break;
         case kEdsStateEvent_Shutdown:
+            camera->mHasOpenSession = false;
             camera->mHandler->didRemoveCamera(camera);
             // TODO - how do we get this to the CameraBrowser, singleton?
             break;
