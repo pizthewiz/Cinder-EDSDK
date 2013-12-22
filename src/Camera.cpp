@@ -94,6 +94,8 @@ EdsError Camera::requestOpenSession(SessionSettings* settings) {
     }
     mHasOpenSession = true;
 
+    mShouldKeepAlive = (settings != NULL) ? settings->getShouldKeepAlive() : mShouldKeepAlive;
+
     EdsUInt32 saveTo = (settings != NULL) ? settings->getPictureSaveLocation() : kEdsSaveTo_Host;
     error = EdsSetPropertyData(mCamera, kEdsPropID_SaveTo, 0, sizeof(saveTo) , &saveTo);
     if (error != EDS_ERR_OK) {
@@ -101,11 +103,15 @@ EdsError Camera::requestOpenSession(SessionSettings* settings) {
         return error;
     }
 
-    if (saveTo == kEdsSaveTo_Host || saveTo == kEdsSaveTo_Camera) {
-        // TODO - EdsSetCapacity
+    if (saveTo == kEdsSaveTo_Host) {
+        // ??? - requires UI lock?
+        EdsCapacity capacity = {0x7FFFFFFF, 0x1000, 1};
+        error = EdsSetCapacity(mCamera, capacity);
+        if (error != EDS_ERR_OK) {
+            console() << "ERROR - failed to set capacity of host" << std::endl;
+            return error;
+        }
     }
-
-    mShouldKeepAlive = (settings != NULL) ? settings->getShouldKeepAlive() : mShouldKeepAlive;
 
     return EDS_ERR_OK;
 }
