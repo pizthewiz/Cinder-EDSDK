@@ -20,8 +20,6 @@
 
 namespace Cinder { namespace EDSDK {
 
-class CameraBrowser;
-
 typedef std::shared_ptr<class Camera> CameraRef;
 
 class CameraHandler {
@@ -41,6 +39,7 @@ public:
     void setHandler(CameraHandler* handler);
 
     std::string getName() const;
+    std::string getPortName() const;
 
     bool hasOpenSession() const;
     EdsError requestOpenSession();
@@ -53,8 +52,6 @@ public:
 private:
     Camera(EdsCameraRef camera);
 
-    std::string getPortName() const;
-
     static EdsError EDSCALLBACK handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inRef, EdsVoid* inContext);
     static EdsError EDSCALLBACK handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 inPropertyID, EdsUInt32 inParam, EdsVoid* inContext);
     static EdsError EDSCALLBACK handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inParam, EdsVoid* inContext);
@@ -63,8 +60,6 @@ private:
     EdsCameraRef mCamera;
     EdsDeviceInfo mDeviceInfo;
     bool mHasOpenSession;
-
-    friend class CameraBrowser;
 };
 
 }}

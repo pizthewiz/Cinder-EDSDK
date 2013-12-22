@@ -69,10 +69,13 @@ void Camera::setHandler(CameraHandler* handler) {
     mHandler = handler;
 }
 
-#pragma mark -
-
 std::string Camera::getName() const {
     return std::string(mDeviceInfo.szDeviceDescription);
+}
+
+
+std::string Camera::getPortName() const {
+    return std::string(mDeviceInfo.szPortName);
 }
 
 bool Camera::hasOpenSession() const {
@@ -119,12 +122,6 @@ EdsError Camera::requestDownloadFile() {
 
 EdsError Camera::requestReadFile() {
     return EDS_ERR_UNIMPLEMENTED;
-}
-
-#pragma mark -
-
-std::string Camera::getPortName() const {
-    return std::string(mDeviceInfo.szPortName);
 }
 
 #pragma mark - CALLBACKS
