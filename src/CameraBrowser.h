@@ -16,9 +16,9 @@ typedef std::shared_ptr<class CameraBrowser> CameraBrowserRef;
 
 class CameraBrowserHandler {
 public:
-    virtual void didAddCamera(CameraBrowserRef cameraBrowser, CameraRef camera) = 0;
-    virtual void didRemoveCamera(CameraBrowserRef cameraBrowser, CameraRef camera) = 0;
-    virtual void didEnumerateCameras(CameraBrowserRef cameraBrowser) = 0;
+    virtual void didAddCamera(CameraRef camera) = 0;
+    virtual void didRemoveCamera(CameraRef camera) = 0;
+    virtual void didEnumerateCameras() = 0;
 };
 
 class CameraBrowser : public std::enable_shared_from_this<CameraBrowser> {
@@ -38,9 +38,9 @@ private:
 
     static EdsError EDSCALLBACK handleCameraAdded(EdsVoid* inContext);
 
-    bool mIsBrowsing;
-    std::vector<CameraRef> mCameras;
     CameraBrowserHandler* mHandler;
+    std::vector<CameraRef> mCameras;
+    bool mIsBrowsing;
 };
 
 }}

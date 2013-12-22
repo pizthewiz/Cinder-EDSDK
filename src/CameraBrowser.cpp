@@ -19,7 +19,6 @@ CameraBrowserRef CameraBrowser::create(CameraBrowserHandler* handler) {
 
 CameraBrowser::CameraBrowser(CameraBrowserHandler* handler) {
     mIsBrowsing = false;
-
     mHandler = handler;
 
     EdsError error = EdsInitializeSDK();
@@ -30,7 +29,7 @@ CameraBrowser::CameraBrowser(CameraBrowserHandler* handler) {
 }
 
 CameraBrowser::~CameraBrowser() {
-    // TODO - disconnect handler
+    mHandler = NULL;
 
     mCameras.clear();
 
@@ -58,7 +57,7 @@ void CameraBrowser::start() {
     }
 
     enumerateCameraList();
-    mHandler->didEnumerateCameras((CameraBrowserRef)this);
+    mHandler->didEnumerateCameras();
 }
 
 //void CameraBrowser::stop() {
@@ -114,7 +113,7 @@ void CameraBrowser::enumerateCameraList() {
         // add if previously unknown
         if (std::none_of(mCameras.begin(), mCameras.end(), [camera](CameraRef c) { return c->getPortName().compare(camera->getPortName()) == 0; })) {
             mCameras.push_back(camera);
-            mHandler->didAddCamera((CameraBrowserRef)this, camera);
+            mHandler->didAddCamera(camera);
         }
     }
 
