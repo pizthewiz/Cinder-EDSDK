@@ -148,9 +148,15 @@ EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 in
 }
 
 EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inParam, EdsVoid* inContext) {
+    Camera* camera = (Camera*)inContext;
     switch (inEvent) {
         case kEdsStateEvent_WillSoonShutDown:
-            // TODO - mShouldKeepAlive
+            if (camera->mHasOpenSession && camera->mShouldKeepAlive) {
+                EdsError error = EdsSendCommand(camera->mCamera, kEdsCameraCommand_ExtendShutDownTimer, 0);
+                if (error != EDS_ERR_OK) {
+                    console() << "ERROR - failed to extend shut down timer" << std::endl;
+                }
+            }
             break;
         default:
             break;
