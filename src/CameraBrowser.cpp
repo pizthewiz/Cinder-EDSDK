@@ -104,7 +104,7 @@ void CameraBrowser::enumerateCameraList() {
 
         CameraRef camera = NULL;
         try {
-            CameraRef camera = Camera::create(cam);
+            camera = Camera::create(cam);
         } catch (...) {
             EdsRelease(cam);
             continue;
