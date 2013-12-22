@@ -1,5 +1,6 @@
 ### NOW
-- [ ] browser and camera event handlers
+- [ ] implement download and Surface calls
+- [ ] sort out UI locking need
 - [ ] wrap EdsError
 
 ### LATER
