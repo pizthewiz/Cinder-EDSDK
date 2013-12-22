@@ -20,8 +20,8 @@ void CaptureApp::didAddCamera(Cinder::EDSDK::CameraBrowser* cameraBrowser, Cinde
     }
 }
 
-void CaptureApp::didAddFile(Cinder::EDSDK::Camera* camera, Cinder::EDSDK::CameraFileRef file) {
-    // TODO - more stuff
+void CaptureApp::didAddFile(Cinder::EDSDK::Camera* camera, EdsDirectoryItemRef directoryItem) {
+    // TODO - save to disk or read into memory
 }
 ```
 
