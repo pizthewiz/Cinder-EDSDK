@@ -112,9 +112,8 @@ void CameraBrowser::enumerateCameraList() {
         EdsRelease(cam);
 
         // add if previously unknown
-        if (std::any_of(mCameras.begin(), mCameras.end(), [camera](CameraRef c) { return strcmp(c->mDeviceInfo.szPortName, camera->mDeviceInfo.szPortName) == 0; })) {
+        if (std::none_of(mCameras.begin(), mCameras.end(), [camera](CameraRef c) { return c->getPortName().compare(camera->getPortName()) == 0; })) {
             mCameras.push_back(camera);
-
             mHandler->didAddCamera((CameraBrowserRef)this, camera);
         }
     }

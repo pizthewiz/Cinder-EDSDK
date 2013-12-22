@@ -121,6 +121,12 @@ EdsError Camera::requestReadFile() {
     return EDS_ERR_UNIMPLEMENTED;
 }
 
+#pragma mark -
+
+std::string Camera::getPortName() const {
+    return std::string(mDeviceInfo.szPortName);
+}
+
 #pragma mark - CALLBACKS
 
 EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inRef, EdsVoid* inContext) {
