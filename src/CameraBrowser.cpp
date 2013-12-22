@@ -40,6 +40,8 @@ CameraBrowser::~CameraBrowser() {
     }
 }
 
+#pragma mark -
+
 //bool CameraBrowser::isBrowsing() const {
 //    return mIsBrowsing;
 //}
@@ -57,7 +59,7 @@ void CameraBrowser::start() {
     }
 
     enumerateCameraList();
-    mHandler->didEnumerateCameras();
+    mHandler->didEnumerateCameras(this);
 }
 
 //void CameraBrowser::stop() {
@@ -113,7 +115,7 @@ void CameraBrowser::enumerateCameraList() {
         // add if previously unknown
         if (std::none_of(mCameras.begin(), mCameras.end(), [camera](CameraRef c) { return c->getPortName().compare(camera->getPortName()) == 0; })) {
             mCameras.push_back(camera);
-            mHandler->didAddCamera(camera);
+            mHandler->didAddCamera(this, camera);
         }
     }
 
