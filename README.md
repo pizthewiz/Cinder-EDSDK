@@ -14,7 +14,7 @@ void CaptureApp::setup() {
 void CaptureApp::didAddCamera(Cinder::EDSDK::CameraBrowser* cameraBrowser, Cinder::EDSDK::CameraRef camera) {
     mCamera = camera;
     mCamera.setHandler(this);
-    EdsError error = mCamera->requestOpenSession();
+    EdsError error = mCamera->requestOpenSession(NULL);
     if (error == EDS_ERR_OK) {
         mCamera->requestTakePicture();
     }

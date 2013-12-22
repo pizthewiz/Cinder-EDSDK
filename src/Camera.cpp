@@ -82,7 +82,7 @@ bool Camera::hasOpenSession() const {
     return mHasOpenSession;
 }
 
-EdsError Camera::requestOpenSession() {
+EdsError Camera::requestOpenSession(SessionSettings* settings) {
     if (mHasOpenSession) {
         return EDS_ERR_SESSION_ALREADY_OPEN;
     }
@@ -92,8 +92,21 @@ EdsError Camera::requestOpenSession() {
         console() << "ERROR - failed to open camera session" << std::endl;
         return error;
     }
-
     mHasOpenSession = true;
+
+    EdsUInt32 saveTo = (settings != NULL) ? settings->getPictureSaveLocation() : kEdsSaveTo_Host;
+    error = EdsSetPropertyData(mCamera, kEdsPropID_SaveTo, 0, sizeof(saveTo) , &saveTo);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to set save destination host/device" << std::endl;
+        return error;
+    }
+
+    if (saveTo == kEdsSaveTo_Host || saveTo == kEdsSaveTo_Camera) {
+        // TODO - EdsSetCapacity
+    }
+
+    mShouldKeepAlive = (settings != NULL) ? settings->getShouldKeepAlive() : mShouldKeepAlive;
+
     return EDS_ERR_OK;
 }
 
@@ -135,6 +148,14 @@ EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 in
 }
 
 EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inParam, EdsVoid* inContext) {
+    switch (inEvent) {
+        case kEdsStateEvent_WillSoonShutDown:
+            // TODO - mShouldKeepAlive
+            break;
+        default:
+            break;
+    }
+
     return EDS_ERR_OK;
 }
 

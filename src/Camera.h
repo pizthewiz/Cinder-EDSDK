@@ -24,10 +24,30 @@ typedef std::shared_ptr<class Camera> CameraRef;
 
 class CameraHandler {
 public:
-//    virtual void didRemoveCamera(CameraRef camera) = 0;
-//    virtual void didAddFile(CameraRef camera, void* file) = 0;
-//    virtual void didDownloadFile(CameraRef camera, void* file, void* something) = 0;
-//    virtual void didReadFile(CameraRef camera, void* file, void* something) = 0;
+//    virtual void didRemoveCamera(Camera* camera) = 0;
+//    virtual void didAddFile(Camera* camera, void* file) = 0;
+//    virtual void didDownloadFile(Camera* camera, void* file, void* something) = 0;
+//    virtual void didReadFile(Camera* camera, void* file, void* something) = 0;
+};
+
+class SessionSettings {
+public:
+    bool getShouldKeepAlive() const {
+        return mShouldKeepAlive;
+    }
+    void setShouldKeepAlive(bool flag) {
+        mShouldKeepAlive = flag;
+    }
+    EdsUInt32 getPictureSaveLocation() const {
+        return mPictureSaveLocation;
+    }
+    void setPictureSaveLocation(EdsUInt32 saveLocation) {
+        mPictureSaveLocation = saveLocation;
+    }
+
+private:
+    bool mShouldKeepAlive = true;
+    EdsUInt32 mPictureSaveLocation = kEdsSaveTo_Host;
 };
 
 class Camera : public std::enable_shared_from_this<Camera> {
@@ -42,10 +62,10 @@ public:
     std::string getPortName() const;
 
     bool hasOpenSession() const;
-    EdsError requestOpenSession();
+    EdsError requestOpenSession(SessionSettings* settings);
     EdsError requestCloseSession();
 
-    EdsError requestTakePicture(/*Options* options*/);
+    EdsError requestTakePicture();
     EdsError requestDownloadFile();
     EdsError requestReadFile();
 
@@ -60,6 +80,7 @@ private:
     EdsCameraRef mCamera;
     EdsDeviceInfo mDeviceInfo;
     bool mHasOpenSession;
+    bool mShouldKeepAlive = true;
 };
 
 }}
