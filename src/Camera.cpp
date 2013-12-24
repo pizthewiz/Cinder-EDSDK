@@ -82,7 +82,7 @@ bool Camera::hasOpenSession() const {
     return mHasOpenSession;
 }
 
-EdsError Camera::requestOpenSession(SessionSettings* settings) {
+EdsError Camera::requestOpenSession(CameraSettings* settings) {
     if (mHasOpenSession) {
         return EDS_ERR_SESSION_ALREADY_OPEN;
     }

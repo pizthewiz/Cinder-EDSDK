@@ -30,7 +30,7 @@ public:
 //    virtual void didReadFile(Camera* camera, void* file, void* something) = 0;
 };
 
-class SessionSettings {
+class CameraSettings {
 public:
     bool getShouldKeepAlive() const {
         return mShouldKeepAlive;
@@ -62,7 +62,7 @@ public:
     std::string getPortName() const;
 
     bool hasOpenSession() const;
-    EdsError requestOpenSession(SessionSettings* settings);
+    EdsError requestOpenSession(CameraSettings* settings);
     EdsError requestCloseSession();
 
     EdsError requestTakePicture();
