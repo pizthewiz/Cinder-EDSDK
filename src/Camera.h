@@ -22,12 +22,12 @@ namespace Cinder { namespace EDSDK {
 
 typedef std::shared_ptr<class Camera> CameraRef;
 
+typedef std::shared_ptr<class CameraFile> CameraFileRef;
+
 class CameraHandler {
 public:
     virtual void didRemoveCamera(Camera* camera) = 0;
-//    virtual void didAddFile(Camera* camera, void* file) = 0;
-//    virtual void didDownloadFile(Camera* camera, void* file, void* something) = 0;
-//    virtual void didReadFile(Camera* camera, void* file, void* something) = 0;
+    virtual void didAddFile(Camera* camera, CameraFileRef file) = 0;
 };
 
 class CameraSettings {
@@ -50,6 +50,20 @@ private:
     EdsUInt32 mPictureSaveLocation = kEdsSaveTo_Host;
 };
 
+class CameraFile : public std::enable_shared_from_this<CameraFile> {
+public:
+    static CameraFileRef create(EdsDirectoryItemRef directoryItem);
+	~CameraFile();
+
+    std::string getFileName() const;
+
+private:
+    CameraFile(EdsDirectoryItemRef directoryItem);
+
+    EdsDirectoryItemRef mDirectoryItem;
+    EdsDirectoryItemInfo mDirectoryItemInfo;
+};
+
 class Camera : public std::enable_shared_from_this<Camera> {
 public:
     static CameraRef create(EdsCameraRef camera);
@@ -66,8 +80,8 @@ public:
     EdsError requestCloseSession();
 
     EdsError requestTakePicture();
-    EdsError requestDownloadFile();
-    EdsError requestReadFile();
+    EdsError requestDownloadFile(CameraFileRef file, ci::fs::path destinationFolderPath);
+//    EdsError requestReadFile(CameraFileRef file);
 
 private:
     Camera(EdsCameraRef camera);

@@ -13,6 +13,38 @@ using namespace ci::app;
 
 namespace Cinder { namespace EDSDK {
 
+#pragma mark - CAMERA FILE
+
+CameraFileRef CameraFile::create(EdsDirectoryItemRef directoryItem) {
+    return CameraFileRef(new CameraFile(directoryItem))->shared_from_this();
+}
+
+CameraFile::CameraFile(EdsDirectoryItemRef directoryItem) {
+    if (directoryItem == NULL) {
+        throw Exception();
+    }
+
+    EdsRetain(directoryItem);
+    mDirectoryItem = directoryItem;
+
+    EdsError error = EdsGetDirectoryItemInfo(mDirectoryItem, &mDirectoryItemInfo);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to get directory item info" << std::endl;
+        throw Exception();
+    }
+}
+
+CameraFile::~CameraFile() {
+    EdsRelease(mDirectoryItem);
+    mDirectoryItem = NULL;
+}
+
+std::string CameraFile::getFileName() const {
+    return std::string(mDirectoryItemInfo.szFileName);
+}
+
+#pragma mark - CAMERA
+
 CameraRef Camera::create(EdsCameraRef camera) {
     return CameraRef(new Camera(camera))->shared_from_this();
 }
@@ -143,13 +175,13 @@ EdsError Camera::requestTakePicture() {
     return error;
 }
 
-EdsError Camera::requestDownloadFile(EdsDirectoryItemRef directoryItem) {
+EdsError Camera::requestDownloadFile(CameraFileRef file, fs::path destinationFolderPath) {
     return EDS_ERR_UNIMPLEMENTED;
 }
 
-EdsError Camera::requestReadFile() {
-    return EDS_ERR_UNIMPLEMENTED;
-}
+//EdsError Camera::requestReadFile(EdsDirectoryItemRef directoryItem) {
+//    return EDS_ERR_UNIMPLEMENTED;
+//}
 
 #pragma mark - CALLBACKS
 
