@@ -13,7 +13,7 @@ using namespace ci::app;
 
 namespace Cinder { namespace EDSDK {
 
-#pragma mark - CAMERA FILE
+#pragma mark CAMERA FILE
 
 CameraFileRef CameraFile::create(EdsDirectoryItemRef directoryItem) {
     return CameraFileRef(new CameraFile(directoryItem))->shared_from_this();
@@ -39,8 +39,12 @@ CameraFile::~CameraFile() {
     mDirectoryItem = NULL;
 }
 
-std::string CameraFile::getFileName() const {
+std::string CameraFile::getName() const {
     return std::string(mDirectoryItemInfo.szFileName);
+}
+
+uint32_t CameraFile::getSize() const {
+    return mDirectoryItemInfo.size;
 }
 
 #pragma mark - CAMERA
@@ -176,7 +180,43 @@ EdsError Camera::requestTakePicture() {
 }
 
 EdsError Camera::requestDownloadFile(CameraFileRef file, fs::path destinationFolderPath) {
-    return EDS_ERR_UNIMPLEMENTED;
+    // check if destination exists and create if not
+    if (!fs::exists(destinationFolderPath)) {
+        bool status = fs::create_directories(destinationFolderPath);
+        if (!status) {
+            console() << "ERROR - failed to create destination folder path '" << destinationFolderPath << "'" << std::endl;
+            return EDS_ERR_INTERNAL_ERROR;
+        }
+    }
+
+    EdsError error = EDS_ERR_OK;
+    fs::path filePath = destinationFolderPath / file->getName();
+
+    EdsStreamRef stream = NULL;
+    error = EdsCreateFileStream(filePath.generic_string().c_str(), kEdsFileCreateDisposition_CreateAlways, kEdsAccess_ReadWrite, &stream);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to create file stream" << std::endl;
+        goto download_cleanup;
+    }
+
+    error = EdsDownload(file->mDirectoryItem, file->getSize(), stream);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to downloads" << std::endl;
+        goto download_cleanup;
+    }
+
+    error = EdsDownloadComplete(file->mDirectoryItem);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to mark download as complete" << std::endl;
+        goto download_cleanup;
+    }
+
+download_cleanup:
+    if (stream != NULL) {
+        EdsRelease(stream);
+    }
+
+    return error;
 }
 
 //EdsError Camera::requestReadFile(EdsDirectoryItemRef directoryItem) {
@@ -186,6 +226,23 @@ EdsError Camera::requestDownloadFile(CameraFileRef file, fs::path destinationFol
 #pragma mark - CALLBACKS
 
 EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inRef, EdsVoid* inContext) {
+    Camera* camera = (Camera*)inContext;
+    switch (inEvent) {
+        case kEdsObjectEvent_DirItemRequestTransfer: {
+            EdsDirectoryItemRef directoryItem = (EdsDirectoryItemRef)inRef;
+            CameraFileRef file = NULL;
+            try {
+                file = CameraFile::create(directoryItem);
+            } catch (...) {
+                break;
+            }
+            EdsRelease(directoryItem);
+            camera->mHandler->didAddFile(camera, file);
+            break;
+        }
+        default:
+            break;
+    }
     return EDS_ERR_OK;
 }
 
@@ -212,7 +269,6 @@ EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inPar
         default:
             break;
     }
-
     return EDS_ERR_OK;
 }
 

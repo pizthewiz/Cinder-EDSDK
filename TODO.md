@@ -1,5 +1,6 @@
 ### NOW
-- [ ] implement download and Surface calls
+- [ ] sort out how to get path from downloadFile
+- [ ] implement Surface fetching call
 - [ ] sort out UI locking need
 - [ ] wrap EdsError
 

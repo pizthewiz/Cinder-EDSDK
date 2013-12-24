@@ -17,6 +17,7 @@
 #endif
 
 #include "EDSDK.h"
+#include "cinder/Cinder.h"
 
 namespace Cinder { namespace EDSDK {
 
@@ -55,13 +56,16 @@ public:
     static CameraFileRef create(EdsDirectoryItemRef directoryItem);
 	~CameraFile();
 
-    std::string getFileName() const;
+    std::string getName() const;
+    uint32_t getSize() const;
 
 private:
     CameraFile(EdsDirectoryItemRef directoryItem);
 
     EdsDirectoryItemRef mDirectoryItem;
     EdsDirectoryItemInfo mDirectoryItemInfo;
+
+    friend class Camera;
 };
 
 class Camera : public std::enable_shared_from_this<Camera> {
