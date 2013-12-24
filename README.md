@@ -20,8 +20,9 @@ void CaptureApp::didAddCamera(Cinder::EDSDK::CameraBrowser* cameraBrowser, Cinde
     }
 }
 
-void CaptureApp::didAddFile(Cinder::EDSDK::Camera* camera, EdsDirectoryItemRef directoryItem) {
-    // TODO - save to disk or read into memory
+void CaptureApp::didAddFile(Cinder::EDSDK::Camera* camera, CameraFileRef file) {
+    fs::path destinationFolderPath = expandPath(fs::path("~/Desktop/Captures"));
+    camera->requestDownloadFile(file, destinationFolderPath);
 }
 ```
 
