@@ -189,11 +189,10 @@ EdsError Camera::requestDownloadFile(CameraFileRef file, fs::path destinationFol
         }
     }
 
-    EdsError error = EDS_ERR_OK;
     fs::path filePath = destinationFolderPath / file->getName();
 
     EdsStreamRef stream = NULL;
-    error = EdsCreateFileStream(filePath.generic_string().c_str(), kEdsFileCreateDisposition_CreateAlways, kEdsAccess_ReadWrite, &stream);
+    EdsError error = EdsCreateFileStream(filePath.generic_string().c_str(), kEdsFileCreateDisposition_CreateAlways, kEdsAccess_ReadWrite, &stream);
     if (error != EDS_ERR_OK) {
         console() << "ERROR - failed to create file stream" << std::endl;
         goto download_cleanup;
@@ -201,7 +200,7 @@ EdsError Camera::requestDownloadFile(CameraFileRef file, fs::path destinationFol
 
     error = EdsDownload(file->mDirectoryItem, file->getSize(), stream);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to downloads" << std::endl;
+        console() << "ERROR - failed to download" << std::endl;
         goto download_cleanup;
     }
 
