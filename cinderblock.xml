@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block
+    name="Cinder-EDSDK"
+    id="com.chordedconstructions.fleshworld.cinder-edsdk"
+    git="https://github.com/pizthewiz/Cinder-EDSDK.git"
+    author="Jean-Pierre Mouilleseaux"
+    summary=""
+    version="0.0.0"
+    url="https://github.com/pizthewiz/Cinder-EDSDK"
+    library="http://www.usa.canon.com/cusa/consumer/standard_display/sdk_homepage"
+    >
+    <supports os="macosx" />
+    <headerPattern>src/*.h</headerPattern>
+    <sourcePattern>src/*.cpp</sourcePattern>
+    <headerPattern>lib/EDSDK/Header/*.h</headerPattern>
+    <platform os="macosx">
+        <framework>lib/EDSDK/Framework/EDSDK.framework</framework>
+        <framework>lib/EDSDK/Framework/DPP.framework</framework>
+        <buildcopy destination="Frameworks">lib/EDSDK/Framework/EDSDK.framework</buildcopy>
+        <buildcopy destination="Frameworks">lib/EDSDK/Framework/DPP.framework</buildcopy>
+        <frameworkPath>lib/EDSDK/Framework</frameworkPath>
+    </platform>
+</block>
+</cinder>
