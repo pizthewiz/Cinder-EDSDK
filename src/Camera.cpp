@@ -118,7 +118,7 @@ bool Camera::hasOpenSession() const {
     return mHasOpenSession;
 }
 
-EdsError Camera::requestOpenSession(CameraSettings* settings) {
+EdsError Camera::requestOpenSession(const Settings &settings) {
     if (mHasOpenSession) {
         return EDS_ERR_SESSION_ALREADY_OPEN;
     }
@@ -130,9 +130,8 @@ EdsError Camera::requestOpenSession(CameraSettings* settings) {
     }
     mHasOpenSession = true;
 
-    mShouldKeepAlive = (settings != NULL) ? settings->getShouldKeepAlive() : mShouldKeepAlive;
-
-    EdsUInt32 saveTo = (settings != NULL) ? settings->getPictureSaveLocation() : kEdsSaveTo_Host;
+    mShouldKeepAlive = settings.getShouldKeepAlive();
+    EdsUInt32 saveTo = settings.getPictureSaveLocation();
     error = EdsSetPropertyData(mCamera, kEdsPropID_SaveTo, 0, sizeof(saveTo) , &saveTo);
     if (error != EDS_ERR_OK) {
         console() << "ERROR - failed to set save destination host/device" << std::endl;
@@ -179,7 +178,7 @@ EdsError Camera::requestTakePicture() {
     return error;
 }
 
-EdsError Camera::requestDownloadFile(CameraFileRef file, fs::path destinationFolderPath) {
+EdsError Camera::requestDownloadFile(CameraFileRef file, const fs::path destinationFolderPath) {
     // check if destination exists and create if not
     if (!fs::exists(destinationFolderPath)) {
         bool status = fs::create_directories(destinationFolderPath);

@@ -22,33 +22,12 @@
 namespace Cinder { namespace EDSDK {
 
 typedef std::shared_ptr<class Camera> CameraRef;
-
 typedef std::shared_ptr<class CameraFile> CameraFileRef;
 
 class CameraHandler {
 public:
     virtual void didRemoveCamera(Camera* camera) = 0;
     virtual void didAddFile(Camera* camera, CameraFileRef file) = 0;
-};
-
-class CameraSettings {
-public:
-    bool getShouldKeepAlive() const {
-        return mShouldKeepAlive;
-    }
-    void setShouldKeepAlive(bool flag) {
-        mShouldKeepAlive = flag;
-    }
-    EdsUInt32 getPictureSaveLocation() const {
-        return mPictureSaveLocation;
-    }
-    void setPictureSaveLocation(EdsUInt32 saveLocation) {
-        mPictureSaveLocation = saveLocation;
-    }
-
-private:
-    bool mShouldKeepAlive = true;
-    EdsUInt32 mPictureSaveLocation = kEdsSaveTo_Host;
 };
 
 class CameraFile : public std::enable_shared_from_this<CameraFile> {
@@ -70,6 +49,27 @@ private:
 
 class Camera : public std::enable_shared_from_this<Camera> {
 public:
+    struct Settings {
+        Settings() : mShouldKeepAlive(true), mPictureSaveLocation(kEdsSaveTo_Host) {}
+
+        Settings& setShouldKeepAlive(bool flag) {
+            mShouldKeepAlive = flag; return *this;
+        }
+        bool getShouldKeepAlive() const {
+            return mShouldKeepAlive;
+        }
+        Settings& setPictureSaveLocation(EdsUInt32 location)  {
+            mPictureSaveLocation = location; return *this;
+        }
+        EdsUInt32 getPictureSaveLocation() const {
+            return mPictureSaveLocation;
+        }
+
+    private:
+        bool mShouldKeepAlive;
+        EdsUInt32 mPictureSaveLocation;
+    };
+
     static CameraRef create(EdsCameraRef camera);
 	~Camera();
 
@@ -80,7 +80,7 @@ public:
     std::string getPortName() const;
 
     bool hasOpenSession() const;
-    EdsError requestOpenSession(CameraSettings* settings);
+    EdsError requestOpenSession(const Settings &settings = Settings());
     EdsError requestCloseSession();
 
     EdsError requestTakePicture();
