@@ -84,7 +84,7 @@ public:
     EdsError requestCloseSession();
 
     EdsError requestTakePicture();
-    EdsError requestDownloadFile(CameraFileRef file, ci::fs::path destinationFolderPath);
+    void requestDownloadFile(const CameraFileRef file, const ci::fs::path destinationFolderPath, std::function<void(EdsError error, ci::fs::path outputFilePath)> callback);
 //    EdsError requestReadFile(CameraFileRef file);
 
 private:

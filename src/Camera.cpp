@@ -178,13 +178,13 @@ EdsError Camera::requestTakePicture() {
     return error;
 }
 
-EdsError Camera::requestDownloadFile(CameraFileRef file, const fs::path destinationFolderPath) {
+void Camera::requestDownloadFile(const CameraFileRef file, const fs::path destinationFolderPath, std::function<void(EdsError error, ci::fs::path outputFilePath)> callback) {
     // check if destination exists and create if not
     if (!fs::exists(destinationFolderPath)) {
         bool status = fs::create_directories(destinationFolderPath);
         if (!status) {
             console() << "ERROR - failed to create destination folder path '" << destinationFolderPath << "'" << std::endl;
-            return EDS_ERR_INTERNAL_ERROR;
+            return callback(EDS_ERR_INTERNAL_ERROR, NULL);
         }
     }
 
@@ -214,11 +214,56 @@ download_cleanup:
         EdsRelease(stream);
     }
 
-    return error;
+    return callback(error, filePath);
 }
 
-//EdsError Camera::requestReadFile(EdsDirectoryItemRef directoryItem) {
-//    return EDS_ERR_UNIMPLEMENTED;
+//void Camera::requestReadFile(const CameraFileRef file, std::function<void(EdsError error, ci::Surface surface)> callback) {
+//    Buffer buffer = NULL;
+//    Surface s;
+//
+//    EdsStreamRef stream = NULL;
+//    EdsError error = EdsCreateMemoryStream(0, &stream);
+//    if (error != EDS_ERR_OK) {
+//        console() << "ERROR - failed to create memory stream" << std::endl;
+//        goto read_cleanup;
+//    }
+//
+//    error = EdsDownload(file->mDirectoryItem, file->getSize(), stream);
+//    if (error != EDS_ERR_OK) {
+//        console() << "ERROR - failed to download" << std::endl;
+//        goto read_cleanup;
+//    }
+//
+//    error = EdsDownloadComplete(file->mDirectoryItem);
+//    if (error != EDS_ERR_OK) {
+//        console() << "ERROR - failed to mark download as complete" << std::endl;
+//        goto read_cleanup;
+//    }
+//
+//    unsigned char* data;
+//    error = EdsGetPointer(stream, (EdsVoid**)&data);
+//    if (error != EDS_ERR_OK) {
+//        console() << "ERROR - failed to get pointer from stream" << std::endl;
+//        goto read_cleanup;
+//    }
+//
+//    EdsUInt32 length;
+//    error = EdsGetLength(stream, &length);
+//    if (error != EDS_ERR_OK) {
+//        console() << "ERROR - failed to get stream length" << std::endl;
+//        goto read_cleanup;
+//    }
+//
+//    buffer = Buffer(data, length);
+//    s = Surface(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
+//    surface = &s;
+//
+//read_cleanup:
+//    if (stream != NULL) {
+//        EdsRelease(stream);
+//    }
+//
+//    return error;
 //}
 
 #pragma mark - CALLBACKS

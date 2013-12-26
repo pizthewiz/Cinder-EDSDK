@@ -22,7 +22,11 @@ void CaptureApp::didAddCamera(Cinder::EDSDK::CameraBrowser* cameraBrowser, Cinde
 
 void CaptureApp::didAddFile(Cinder::EDSDK::Camera* camera, CameraFileRef file) {
     fs::path destinationFolderPath = expandPath(fs::path("~/Desktop/Captures"));
-    camera->requestDownloadFile(file, destinationFolderPath);
+    camera->requestDownloadFile(file, destinationFolderPath, [this](EdsError error, fs::path outputFilePath) {
+        if (error == EDS_ERR_OK) {
+            console() << "downloaded image to: " << outputFilePath << endl;
+        }
+    });
 }
 ```
 
