@@ -1,5 +1,5 @@
 # Cinder-EDSDK
-`Cinder-EDSDK` is a [CinderBlock](http://libcinder.org/) to interact with a Canon dSLR.
+`Cinder-EDSDK` is a [CinderBlock](http://libcinder.org/) to interact with a Canon DSLR.
 
 ## FEATURES
 Image capture to memory or on-disk, camera keep-alive, simultaneous control of multiple cameras, camera connect and disconnect callbacks…
