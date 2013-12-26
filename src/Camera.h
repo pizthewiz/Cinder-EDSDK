@@ -18,6 +18,7 @@
 
 #include "EDSDK.h"
 #include "cinder/Cinder.h"
+#include "cinder/ImageIo.h"
 
 namespace Cinder { namespace EDSDK {
 
@@ -85,7 +86,7 @@ public:
 
     EdsError requestTakePicture();
     void requestDownloadFile(const CameraFileRef file, const ci::fs::path destinationFolderPath, std::function<void(EdsError error, ci::fs::path outputFilePath)> callback);
-//    EdsError requestReadFile(CameraFileRef file);
+    void requestReadFile(const CameraFileRef file, std::function<void(EdsError error, ci::Surface surface)> callback);
 
 private:
     Camera(EdsCameraRef camera);
@@ -98,7 +99,7 @@ private:
     EdsCameraRef mCamera;
     EdsDeviceInfo mDeviceInfo;
     bool mHasOpenSession;
-    bool mShouldKeepAlive = true;
+    bool mShouldKeepAlive;
 };
 
 }}

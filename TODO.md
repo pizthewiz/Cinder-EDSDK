@@ -1,10 +1,9 @@
 ### NOW
-- [ ] implement Surface fetching call
 - [ ] sort out UI locking need
+- [ ] migrate CameraBrowser to a singleton
 
 ### LATER
-- [ ] migrate CameraBrowser to a singleton?
-- [ ] wrap EdsError
-- [ ] consider lambdas instead of event handling functions?
+- [ ] consider std::function instead of handler classes
 - [ ] Live View support
 - [ ] Canon error logger
+- [ ] wrap EdsError

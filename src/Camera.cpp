@@ -214,57 +214,56 @@ download_cleanup:
         EdsRelease(stream);
     }
 
-    return callback(error, filePath);
+    callback(error, filePath);
 }
 
-//void Camera::requestReadFile(const CameraFileRef file, std::function<void(EdsError error, ci::Surface surface)> callback) {
-//    Buffer buffer = NULL;
-//    Surface s;
-//
-//    EdsStreamRef stream = NULL;
-//    EdsError error = EdsCreateMemoryStream(0, &stream);
-//    if (error != EDS_ERR_OK) {
-//        console() << "ERROR - failed to create memory stream" << std::endl;
-//        goto read_cleanup;
-//    }
-//
-//    error = EdsDownload(file->mDirectoryItem, file->getSize(), stream);
-//    if (error != EDS_ERR_OK) {
-//        console() << "ERROR - failed to download" << std::endl;
-//        goto read_cleanup;
-//    }
-//
-//    error = EdsDownloadComplete(file->mDirectoryItem);
-//    if (error != EDS_ERR_OK) {
-//        console() << "ERROR - failed to mark download as complete" << std::endl;
-//        goto read_cleanup;
-//    }
-//
-//    unsigned char* data;
-//    error = EdsGetPointer(stream, (EdsVoid**)&data);
-//    if (error != EDS_ERR_OK) {
-//        console() << "ERROR - failed to get pointer from stream" << std::endl;
-//        goto read_cleanup;
-//    }
-//
-//    EdsUInt32 length;
-//    error = EdsGetLength(stream, &length);
-//    if (error != EDS_ERR_OK) {
-//        console() << "ERROR - failed to get stream length" << std::endl;
-//        goto read_cleanup;
-//    }
-//
-//    buffer = Buffer(data, length);
-//    s = Surface(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
-//    surface = &s;
-//
-//read_cleanup:
-//    if (stream != NULL) {
-//        EdsRelease(stream);
-//    }
-//
-//    return error;
-//}
+void Camera::requestReadFile(const CameraFileRef file, std::function<void(EdsError error, ci::Surface surface)> callback) {
+    Buffer buffer = NULL;
+    ci::Surface surface;
+
+    EdsStreamRef stream = NULL;
+    EdsError error = EdsCreateMemoryStream(0, &stream);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to create memory stream" << std::endl;
+        goto read_cleanup;
+    }
+
+    error = EdsDownload(file->mDirectoryItem, file->getSize(), stream);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to download" << std::endl;
+        goto read_cleanup;
+    }
+
+    error = EdsDownloadComplete(file->mDirectoryItem);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to mark download as complete" << std::endl;
+        goto read_cleanup;
+    }
+
+    void* data;
+    error = EdsGetPointer(stream, (EdsVoid**)&data);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to get pointer from stream" << std::endl;
+        goto read_cleanup;
+    }
+
+    EdsUInt32 length;
+    error = EdsGetLength(stream, &length);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to get stream length" << std::endl;
+        goto read_cleanup;
+    }
+
+    buffer = Buffer(data, length);
+    surface = Surface(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
+
+read_cleanup:
+    if (stream != NULL) {
+        EdsRelease(stream);
+    }
+
+    callback(error, surface);
+}
 
 #pragma mark - CALLBACKS
 
