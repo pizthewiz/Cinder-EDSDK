@@ -1,4 +1,5 @@
 ### NOW
+- [ ] ripple disconnect from camera to browser
 - [ ] sort out UI locking need
 - [ ] migrate CameraBrowser to a singleton
 
