@@ -20,7 +20,7 @@ CameraFileRef CameraFile::create(EdsDirectoryItemRef directoryItem) {
 }
 
 CameraFile::CameraFile(EdsDirectoryItemRef directoryItem) {
-    if (directoryItem == NULL) {
+    if (!directoryItem) {
         throw Exception();
     }
 
@@ -54,7 +54,7 @@ CameraRef Camera::create(EdsCameraRef camera) {
 }
 
 Camera::Camera(EdsCameraRef camera) {
-    if (camera == NULL) {
+    if (!camera) {
         throw Exception();
     }
 
@@ -210,7 +210,7 @@ void Camera::requestDownloadFile(const CameraFileRef file, const fs::path destin
     }
 
 download_cleanup:
-    if (stream != NULL) {
+    if (stream) {
         EdsRelease(stream);
     }
 
@@ -258,7 +258,7 @@ void Camera::requestReadFile(const CameraFileRef file, std::function<void(EdsErr
     surface = Surface(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
 
 read_cleanup:
-    if (stream != NULL) {
+    if (stream) {
         EdsRelease(stream);
     }
 
