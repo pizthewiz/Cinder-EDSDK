@@ -32,7 +32,7 @@ void CaptureApp::didAddFile(Cinder::EDSDK::Camera* camera, CameraFileRef file) {
 
 Download the EDSDK from Canon, unarchive and move the _EDSDK_ folder into _Cinder-EDSDK/lib_.
 
-Only tested with Cinder 0.8.6-dev on OS X 10.9 with EDSDK 2.13.2. The application target must be built i386, Canon's libraries are not yet built 64-bit.
+Only tested with Cinder 0.8.6-dev on OS X 10.9 with EDSDK 2.13.2. The application target must be built i386, Canon's libraries are not yet built x86_64.
 
 ## GREETZ
 - [Red Paper Heart](http://www.redpaperheart.com)'s [Cinder-CanonSdk](https://github.com/redpaperheart/Cinder-CanonSdk)
