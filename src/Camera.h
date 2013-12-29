@@ -86,7 +86,7 @@ public:
 
     EdsError requestTakePicture();
     void requestDownloadFile(const CameraFileRef file, const ci::fs::path destinationFolderPath, std::function<void(EdsError error, ci::fs::path outputFilePath)> callback);
-    void requestReadFile(const CameraFileRef file, std::function<void(EdsError error, ci::Surface surface)> callback);
+    void requestReadFile(const CameraFileRef file, std::function<void(EdsError error, ci::Surface8u surface)> callback);
 
 private:
     Camera(EdsCameraRef camera);

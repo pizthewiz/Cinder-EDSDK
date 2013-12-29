@@ -217,7 +217,7 @@ download_cleanup:
     callback(error, filePath);
 }
 
-void Camera::requestReadFile(const CameraFileRef file, std::function<void(EdsError error, ci::Surface surface)> callback) {
+void Camera::requestReadFile(const CameraFileRef file, std::function<void(EdsError error, ci::Surface8u surface)> callback) {
     Buffer buffer = NULL;
     ci::Surface surface;
 
@@ -255,7 +255,7 @@ void Camera::requestReadFile(const CameraFileRef file, std::function<void(EdsErr
     }
 
     buffer = Buffer(data, length);
-    surface = Surface(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
+    surface = Surface8u(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
 
 read_cleanup:
     if (stream) {
