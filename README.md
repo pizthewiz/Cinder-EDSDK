@@ -1,5 +1,5 @@
 # Cinder-EDSDK
-`Cinder-EDSDK` is a [CinderBlock](http://libcinder.org/) to interact with a Canon DSLR.
+`Cinder-EDSDK` is a [CinderBlock](http://libcinder.org/) to interact with Canon cameras. See Canon's [compatibility chart](http://www.usa.canon.com/cusa/consumer/standard_display/sdk_homepage#SDKQ7) for a list of supported cameras.
 
 ### FEATURES
 Image capture to memory or on-disk, camera keep-alive, simultaneous control of multiple cameras, camera connect and disconnect callbacks…
@@ -36,7 +36,7 @@ void CaptureApp::didAddFile(Cinder::EDSDK::Camera* camera, CameraFileRef file) {
 - Unarchive
 - Move the _EDSDK_ folder into _Cinder-EDSDK/lib_
 
-Cinder-EDSDK has only been tested with the dev branch of the [Cinder repository](https://github.com/Cinder/Cinder) on OS X 10..19 with EDSDK 2.13.2. The application target must be built i386, Canon's libraries are not yet built x86_64. Please see the [TODO](TODO.md) for the project status.
+Cinder-EDSDK has only been tested with the dev branch of the [Cinder repository](https://github.com/Cinder/Cinder) on OS X 10.9.1 with EDSDK 2.13.2. Earlier versions of the EDSDK seemed to have strange memory issues, only 2.13.2 or later should be used. The application target must be built i386 as the EDSDK provided frameworks are not yet built x86_64. Please see the [TODO](TODO.md) for the project status.
 
 ### GREETZ
 - [Red Paper Heart](http://www.redpaperheart.com)'s [Cinder-CanonSdk](https://github.com/redpaperheart/Cinder-CanonSdk)
