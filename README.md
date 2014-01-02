@@ -7,11 +7,12 @@ Image capture to memory or on-disk, camera keep-alive, simultaneous control of m
 ### EXAMPLE
 ```C++
 void CaptureApp::setup() {
-    mCameraBrowser = Cinder::EDSDK::CameraBrowser::create(this);
+    mCameraBrowser = CameraBrowser::create();
+    mCamera.setHandler(this);
     mCameraBrowser->start();
 }
 
-void CaptureApp::didAddCamera(Cinder::EDSDK::CameraBrowser* cameraBrowser, Cinder::EDSDK::CameraRef camera) {
+void CaptureApp::didAddCamera(CameraBrowser* cameraBrowser, CameraRef camera) {
     mCamera = camera;
     mCamera.setHandler(this);
     EdsError error = mCamera->requestOpenSession();

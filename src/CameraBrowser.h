@@ -23,8 +23,11 @@ public:
 
 class CameraBrowser : public std::enable_shared_from_this<CameraBrowser> {
 public:
-    static CameraBrowserRef create(CameraBrowserHandler* handler);
+    static CameraBrowserRef create();
 	~CameraBrowser();
+
+    CameraBrowserHandler* getHandler() const;
+    void setHandler(CameraBrowserHandler* handler);
 
 //    bool isBrowsing() const;
     void start();
@@ -33,7 +36,7 @@ public:
     const std::vector<CameraRef>& getCameras() const;
 
 private:
-    CameraBrowser(CameraBrowserHandler* handler);
+    CameraBrowser();
     void enumerateCameraList();
 
     static EdsError EDSCALLBACK handleCameraAdded(EdsVoid* inContext);

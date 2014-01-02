@@ -13,13 +13,12 @@ using namespace ci::app;
 
 namespace Cinder { namespace EDSDK {
 
-CameraBrowserRef CameraBrowser::create(CameraBrowserHandler* handler) {
-	return CameraBrowserRef(new CameraBrowser(handler))->shared_from_this();
+CameraBrowserRef CameraBrowser::create() {
+	return CameraBrowserRef(new CameraBrowser())->shared_from_this();
 }
 
-CameraBrowser::CameraBrowser(CameraBrowserHandler* handler) {
+CameraBrowser::CameraBrowser() {
     mIsBrowsing = false;
-    mHandler = handler;
 
     EdsError error = EdsInitializeSDK();
     if (error != EDS_ERR_OK) {
@@ -41,6 +40,14 @@ CameraBrowser::~CameraBrowser() {
 }
 
 #pragma mark -
+
+CameraBrowserHandler* CameraBrowser::getHandler() const {
+    return mHandler;
+}
+
+void CameraBrowser::setHandler(CameraBrowserHandler* handler) {
+    mHandler = handler;
+}
 
 //bool CameraBrowser::isBrowsing() const {
 //    return mIsBrowsing;
