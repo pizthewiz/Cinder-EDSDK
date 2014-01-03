@@ -59,8 +59,8 @@ Camera::Camera(EdsCameraRef camera) {
         throw Exception();
     }
 
+    EdsRetain(camera);
     mCamera = camera;
-    EdsRetain(mCamera);
 
     EdsError error = EdsGetDeviceInfo(mCamera, &mDeviceInfo);
     if (error != EDS_ERR_OK) {
@@ -92,6 +92,7 @@ Camera::~Camera() {
         requestCloseSession();
     }
 
+    // NB - after EDSDK 2.10 releasing the EdsCameraRef will cause an EXC_BAD_ACCESS (code=EXC_I386_GPFLT)
 //    EdsRelease(mCamera);
     mCamera = NULL;
 }
@@ -277,13 +278,19 @@ EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inR
             try {
                 file = CameraFile::create(directoryItem);
             } catch (...) {
+                EdsRelease(directoryItem);
                 break;
             }
             EdsRelease(directoryItem);
+            directoryItem = NULL;
             camera->mHandler->didAddFile(camera, file);
             break;
         }
         default:
+            if (inRef) {
+                EdsRelease(inRef);
+                inRef = NULL;
+            }
             break;
     }
     return EDS_ERR_OK;
