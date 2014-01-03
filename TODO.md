@@ -1,10 +1,9 @@
 ### NOW
 - [ ] sort out UI locking need
+- [ ] sort out why EdsRelease(mCamera) crashes
 - [ ] add basic and advanced samples
 
 ### LATER
-- [ ] sort out why EdsRelease(mCamera) crashes
+- [ ] test with multiple cameras
 - [ ] consider std::function instead of handler classes
-- [ ] Live View support
-- [ ] Canon error logger
-- [ ] wrap EdsError
+- [ ] Live View support, see 6.3.10 SAMPLE10 Live view
