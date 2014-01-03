@@ -71,7 +71,7 @@ void CameraBrowser::start() {
     }
 
     enumerateCameraList();
-    mHandler->didEnumerateCameras(this);
+    mHandler->didEnumerateCameras();
 }
 
 //void CameraBrowser::stop() {
@@ -127,7 +127,7 @@ void CameraBrowser::enumerateCameraList() {
         // add if previously unknown
         if (std::none_of(mCameras.begin(), mCameras.end(), [camera](CameraRef c) { return c->getPortName().compare(camera->getPortName()) == 0; })) {
             mCameras.push_back(camera);
-            mHandler->didAddCamera(this, camera);
+            mHandler->didAddCamera(camera);
         }
     }
 
@@ -143,7 +143,7 @@ void CameraBrowser::removeCamera(Camera* camera) {
 
     CameraRef c = mCameras[it - mCameras.begin()];
     mCameras.erase(it);
-    mHandler->didRemoveCamera(this, c);
+    mHandler->didRemoveCamera(c);
 }
 
 #pragma mark - CALLBACKS

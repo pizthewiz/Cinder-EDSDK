@@ -16,9 +16,9 @@ typedef std::shared_ptr<class CameraBrowser> CameraBrowserRef;
 
 class CameraBrowserHandler {
 public:
-    virtual void didAddCamera(CameraBrowser* browser, CameraRef camera) = 0;
-    virtual void didRemoveCamera(CameraBrowser* browser, CameraRef camera) = 0;
-    virtual void didEnumerateCameras(CameraBrowser* browser) = 0;
+    virtual void didAddCamera(CameraRef camera) = 0;
+    virtual void didRemoveCamera(CameraRef camera) = 0;
+    virtual void didEnumerateCameras() = 0;
 };
 
 class CameraBrowser : public std::enable_shared_from_this<CameraBrowser>, private boost::noncopyable {

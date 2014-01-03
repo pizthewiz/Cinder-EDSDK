@@ -7,12 +7,11 @@ Image capture to memory or on-disk, camera keep-alive, simultaneous control of m
 ### EXAMPLE
 ```C++
 void CaptureApp::setup() {
-    mCameraBrowser = CameraBrowser::instance();
-    mCamera.setHandler(this);
-    mCameraBrowser->start();
+    CameraBrowser::instance()->setHandler(this);
+    CameraBrowser::instance()->start();
 }
 
-void CaptureApp::didAddCamera(CameraBrowser* cameraBrowser, CameraRef camera) {
+void CaptureApp::didAddCamera(CameraRef camera) {
     mCamera = camera;
     mCamera.setHandler(this);
     EdsError error = mCamera->requestOpenSession();
