@@ -86,7 +86,8 @@ Camera::Camera(EdsCameraRef camera) {
 }
 
 Camera::~Camera() {
-    mHandler = NULL;
+    mRemovedHandler = NULL;
+    mFileAddedHandler = NULL;
 
     if (mHasOpenSession) {
         requestCloseSession();
@@ -99,12 +100,12 @@ Camera::~Camera() {
 
 #pragma mark -
 
-CameraHandler* Camera::getHandler() const {
-    return mHandler;
+void Camera::connectRemovedHandler(const std::function<void(CameraRef)>& handler) {
+    mRemovedHandler = handler;
 }
 
-void Camera::setHandler(CameraHandler* handler) {
-    mHandler = handler;
+void Camera::connectFileAddedHandler(const std::function<void(CameraRef, CameraFileRef)>& handler) {
+    mFileAddedHandler = handler;
 }
 
 std::string Camera::getName() const {
@@ -270,7 +271,8 @@ read_cleanup:
 #pragma mark - CALLBACKS
 
 EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inRef, EdsVoid* inContext) {
-    Camera* camera = (Camera*)inContext;
+    Camera* c = (Camera*)inContext;
+    CameraRef camera = CameraBrowser::instance()->cameraForPortName(c->getPortName());
     switch (inEvent) {
         case kEdsObjectEvent_DirItemRequestTransfer: {
             EdsDirectoryItemRef directoryItem = (EdsDirectoryItemRef)inRef;
@@ -283,7 +285,9 @@ EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inR
             }
             EdsRelease(directoryItem);
             directoryItem = NULL;
-            camera->mHandler->didAddFile(camera, file);
+            if (camera->mFileAddedHandler) {
+                camera->mFileAddedHandler(camera, file);
+            }
             break;
         }
         default:
@@ -301,7 +305,8 @@ EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 in
 }
 
 EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inParam, EdsVoid* inContext) {
-    Camera* camera = (Camera*)inContext;
+    Camera* c = (Camera*)inContext;
+    CameraRef camera = CameraBrowser::instance()->cameraForPortName(c->getPortName());
     switch (inEvent) {
         case kEdsStateEvent_WillSoonShutDown:
             if (camera->mHasOpenSession && camera->mShouldKeepAlive) {
@@ -314,7 +319,9 @@ EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inPar
         case kEdsStateEvent_Shutdown:
             camera->requestCloseSession();
             // send handler and browser removal notices
-            camera->mHandler->didRemoveCamera(camera);
+            if (camera->mRemovedHandler) {
+                camera->mRemovedHandler(camera);
+            }
             CameraBrowser::instance()->removeCamera(camera);
             break;
         default:

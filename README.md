@@ -7,20 +7,20 @@ Image capture to memory or on-disk, camera keep-alive, simultaneous control of m
 ### EXAMPLE
 ```C++
 void CaptureApp::setup() {
-    CameraBrowser::instance()->setHandler(this);
+    CameraBrowser::instance()->connectAddedHandler(&CaptureApp::browserDidAddCamera, this);
     CameraBrowser::instance()->start();
 }
 
-void CaptureApp::didAddCamera(CameraRef camera) {
+void CaptureApp::browserDidAddCamera(CameraRef camera) {
     mCamera = camera;
-    mCamera.setHandler(this);
+    mCamera->connectFileAddedHandler(&CaptureApp::didAddFile, this);
     EdsError error = mCamera->requestOpenSession();
     if (error == EDS_ERR_OK) {
         mCamera->requestTakePicture();
     }
 }
 
-void CaptureApp::didAddFile(Cinder::EDSDK::Camera* camera, CameraFileRef file) {
+void CaptureApp::didAddFile(CameraRef camera, CameraFileRef file) {
     fs::path destinationFolderPath = expandPath(fs::path("~/Desktop/Captures"));
     camera->requestDownloadFile(file, destinationFolderPath, [this](EdsError error, fs::path outputFilePath) {
         if (error == EDS_ERR_OK) {

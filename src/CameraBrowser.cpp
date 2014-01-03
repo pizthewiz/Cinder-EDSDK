@@ -33,7 +33,9 @@ CameraBrowser::CameraBrowser() {
 }
 
 CameraBrowser::~CameraBrowser() {
-    mHandler = NULL;
+    mAddedHandler = NULL;
+    mRemovedHandler = NULL;
+    mEnumeratedHandler = NULL;
 
     mCameras.clear();
 
@@ -46,12 +48,16 @@ CameraBrowser::~CameraBrowser() {
 
 #pragma mark -
 
-CameraBrowserHandler* CameraBrowser::getHandler() const {
-    return mHandler;
+void CameraBrowser::connectAddedHandler(const std::function<void(CameraRef)>& handler) {
+    mAddedHandler = handler;
 }
 
-void CameraBrowser::setHandler(CameraBrowserHandler* handler) {
-    mHandler = handler;
+void CameraBrowser::connectRemovedHandler(const std::function<void(CameraRef)>& handler) {
+    mRemovedHandler = handler;
+}
+
+void CameraBrowser::connectEnumeratedHandler(const std::function<void(void)>& handler) {
+    mEnumeratedHandler = handler;
 }
 
 //bool CameraBrowser::isBrowsing() const {
@@ -71,7 +77,9 @@ void CameraBrowser::start() {
     }
 
     enumerateCameraList();
-    mHandler->didEnumerateCameras();
+    if (mEnumeratedHandler) {
+        mEnumeratedHandler();
+    }
 }
 
 //void CameraBrowser::stop() {
@@ -127,14 +135,16 @@ void CameraBrowser::enumerateCameraList() {
         // add if previously unknown
         if (std::none_of(mCameras.begin(), mCameras.end(), [camera](CameraRef c) { return c->getPortName().compare(camera->getPortName()) == 0; })) {
             mCameras.push_back(camera);
-            mHandler->didAddCamera(camera);
+            if (mAddedHandler) {
+                mAddedHandler(camera);
+            }
         }
     }
 
     EdsRelease(cameraList);
 }
 
-void CameraBrowser::removeCamera(Camera* camera) {
+void CameraBrowser::removeCamera(CameraRef camera) {
     auto it = std::find_if(mCameras.begin(), mCameras.end(), [camera](CameraRef c){ return c->getPortName().compare(camera->getPortName()) == 0; });
     if (it == mCameras.end()) {
         console() << "ERROR - failed to find removed camera:" << camera->getName() << " in camera browser's list" << std::endl;
@@ -143,7 +153,18 @@ void CameraBrowser::removeCamera(Camera* camera) {
 
     CameraRef c = mCameras[it - mCameras.begin()];
     mCameras.erase(it);
-    mHandler->didRemoveCamera(c);
+    if (mRemovedHandler) {
+        mRemovedHandler(camera);
+    }
+}
+
+CameraRef CameraBrowser::cameraForPortName(const std::string name) const {
+    CameraRef camera = NULL;
+    auto it = std::find_if(mCameras.begin(), mCameras.end(), [name](CameraRef c){ return c->getPortName().compare(name) == 0; });
+    if (it != mCameras.end()) {
+        camera = mCameras[it - mCameras.begin()];
+    }
+    return camera;
 }
 
 #pragma mark - CALLBACKS

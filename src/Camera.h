@@ -3,7 +3,7 @@
 //  Cinder-EDSDK
 //
 //  Created by Jean-Pierre Mouilleseaux on 08 Dec 2013.
-//  Copyright 2013 Chorded Constructions. All rights reserved.
+//  Copyright 2013-2014 Chorded Constructions. All rights reserved.
 //
 
 #pragma once
@@ -24,12 +24,6 @@ namespace Cinder { namespace EDSDK {
 
 typedef std::shared_ptr<class Camera> CameraRef;
 typedef std::shared_ptr<class CameraFile> CameraFileRef;
-
-class CameraHandler {
-public:
-    virtual void didRemoveCamera(Camera* camera) = 0;
-    virtual void didAddFile(Camera* camera, CameraFileRef file) = 0;
-};
 
 class CameraFile : public std::enable_shared_from_this<CameraFile> {
 public:
@@ -74,8 +68,12 @@ public:
     static CameraRef create(EdsCameraRef camera);
 	~Camera();
 
-    CameraHandler* getHandler() const;
-    void setHandler(CameraHandler* handler);
+    template<typename T, typename Y>
+    inline void connectRemovedHandler(T handler, Y* obj) { connectRemovedHandler(std::bind(handler, obj, std::placeholders::_1)); }
+    void connectRemovedHandler(const std::function<void(CameraRef)>& handler);
+    template<typename T, typename Y>
+    inline void connectFileAddedHandler(T handler, Y* obj) { connectFileAddedHandler(std::bind(handler, obj, std::placeholders::_1, std::placeholders::_2)); }
+    void connectFileAddedHandler(const std::function<void(CameraRef, CameraFileRef)>& handler);
 
     std::string getName() const;
     std::string getPortName() const;
@@ -95,7 +93,8 @@ private:
     static EdsError EDSCALLBACK handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 inPropertyID, EdsUInt32 inParam, EdsVoid* inContext);
     static EdsError EDSCALLBACK handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inParam, EdsVoid* inContext);
 
-    CameraHandler* mHandler;
+    std::function<void (CameraRef)> mRemovedHandler;
+    std::function<void (CameraRef, CameraFileRef)> mFileAddedHandler;
     EdsCameraRef mCamera;
     EdsDeviceInfo mDeviceInfo;
     bool mHasOpenSession;
