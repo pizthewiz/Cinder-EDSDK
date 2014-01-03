@@ -7,7 +7,7 @@ Image capture to memory or on-disk, camera keep-alive, simultaneous control of m
 ### EXAMPLE
 ```C++
 void CaptureApp::setup() {
-    mCameraBrowser = CameraBrowser::create();
+    mCameraBrowser = CameraBrowser::instance();
     mCamera.setHandler(this);
     mCameraBrowser->start();
 }

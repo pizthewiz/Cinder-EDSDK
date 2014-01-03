@@ -3,7 +3,7 @@
 //  Cinder-EDSDK
 //
 //  Created by Jean-Pierre Mouilleseaux on 08 Dec 2013.
-//  Copyright 2013 Chorded Constructions. All rights reserved.
+//  Copyright 2013-2014 Chorded Constructions. All rights reserved.
 //
 
 #include "CameraBrowser.h"
@@ -13,8 +13,13 @@ using namespace ci::app;
 
 namespace Cinder { namespace EDSDK {
 
-CameraBrowserRef CameraBrowser::create() {
-	return CameraBrowserRef(new CameraBrowser())->shared_from_this();
+CameraBrowserRef CameraBrowser::sInstance = 0;
+
+CameraBrowserRef CameraBrowser::instance() {
+    if (!sInstance) {
+        sInstance = CameraBrowserRef(new CameraBrowser())->shared_from_this();
+    }
+	return sInstance;
 }
 
 CameraBrowser::CameraBrowser() {
@@ -127,6 +132,18 @@ void CameraBrowser::enumerateCameraList() {
     }
 
     EdsRelease(cameraList);
+}
+
+void CameraBrowser::removeCamera(Camera* camera) {
+    auto it = std::find_if(mCameras.begin(), mCameras.end(), [camera](CameraRef c){ return c->getPortName().compare(camera->getPortName()) == 0; });
+    if (it == mCameras.end()) {
+        console() << "ERROR - failed to find removed camera:" << camera->getName() << " in camera browser's list" << std::endl;
+        return;
+    }
+
+    CameraRef c = mCameras[it - mCameras.begin()];
+    mCameras.erase(it);
+    mHandler->didRemoveCamera(this, c);
 }
 
 #pragma mark - CALLBACKS

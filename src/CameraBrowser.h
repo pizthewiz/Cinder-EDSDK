@@ -3,7 +3,7 @@
 //  Cinder-EDSDK
 //
 //  Created by Jean-Pierre Mouilleseaux on 08 Dec 2013.
-//  Copyright 2013 Chorded Constructions. All rights reserved.
+//  Copyright 2013-2014 Chorded Constructions. All rights reserved.
 //
 
 #pragma once
@@ -21,9 +21,9 @@ public:
     virtual void didEnumerateCameras(CameraBrowser* browser) = 0;
 };
 
-class CameraBrowser : public std::enable_shared_from_this<CameraBrowser> {
+class CameraBrowser : public std::enable_shared_from_this<CameraBrowser>, private boost::noncopyable {
 public:
-    static CameraBrowserRef create();
+    static CameraBrowserRef instance();
 	~CameraBrowser();
 
     CameraBrowserHandler* getHandler() const;
@@ -38,12 +38,16 @@ public:
 private:
     CameraBrowser();
     void enumerateCameraList();
+    void removeCamera(Camera* camera);
 
     static EdsError EDSCALLBACK handleCameraAdded(EdsVoid* inContext);
 
+    static CameraBrowserRef sInstance;
     CameraBrowserHandler* mHandler;
     std::vector<CameraRef> mCameras;
     bool mIsBrowsing;
+
+    friend class Camera;
 };
 
 }}

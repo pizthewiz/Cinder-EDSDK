@@ -3,10 +3,11 @@
 //  Cinder-EDSDK
 //
 //  Created by Jean-Pierre Mouilleseaux on 08 Dec 2013.
-//  Copyright 2013 Chorded Constructions. All rights reserved.
+//  Copyright 2013-2014 Chorded Constructions. All rights reserved.
 //
 
 #include "Camera.h"
+#include "CameraBrowser.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -58,8 +59,8 @@ Camera::Camera(EdsCameraRef camera) {
         throw Exception();
     }
 
-    EdsRetain(camera);
     mCamera = camera;
+    EdsRetain(mCamera);
 
     EdsError error = EdsGetDeviceInfo(mCamera, &mDeviceInfo);
     if (error != EDS_ERR_OK) {
@@ -91,7 +92,7 @@ Camera::~Camera() {
         requestCloseSession();
     }
 
-    EdsRelease(mCamera);
+//    EdsRelease(mCamera);
     mCamera = NULL;
 }
 
@@ -304,9 +305,10 @@ EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inPar
             }
             break;
         case kEdsStateEvent_Shutdown:
-            camera->mHasOpenSession = false;
+            camera->requestCloseSession();
+            // send handler and browser removal notices
             camera->mHandler->didRemoveCamera(camera);
-            // TODO - how do we get this to the CameraBrowser, singleton?
+            CameraBrowser::instance()->removeCamera(camera);
             break;
         default:
             break;
