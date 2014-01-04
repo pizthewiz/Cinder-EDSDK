@@ -1,5 +1,5 @@
 ### NOW
-- [ ] sort out why EdsRelease(mCamera) crashes *contact with Canon SDK support has been initiated** 
+- [ ] sort out why EdsRelease(mCamera) in Camera::~Camera() crashes *contact with Canon SDK support has been initiated** 
 - [ ] add basic and advanced samples
 
 ### LATER
