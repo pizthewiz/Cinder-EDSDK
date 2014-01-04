@@ -93,7 +93,7 @@ Camera::~Camera() {
         requestCloseSession();
     }
 
-    // NB - after EDSDK 2.10 releasing the EdsCameraRef will cause an EXC_BAD_ACCESS (code=EXC_I386_GPFLT)
+    // NB - after EDSDK 2.10 releasing the EdsCameraRef will cause an EXC_BAD_ACCESS (code=EXC_I386_GPFLT) at the end of the runloop
 //    EdsRelease(mCamera);
     mCamera = NULL;
 }
