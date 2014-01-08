@@ -3,4 +3,6 @@
 xcuserdata/
 !xcuserdata/default.*
 
+build/
+
 lib/EDSDK
