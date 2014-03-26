@@ -1,5 +1,4 @@
 ### NOW
-- [ ] sort out why EdsRelease(mCamera) in Camera::~Camera() causes later crash ([backtrace](https://gist.github.com/pizthewiz/22820a2b19faadd867c3)) *Canon SDK support has been contacted*
 
 ### LATER
 - [ ] test with multiple cameras
