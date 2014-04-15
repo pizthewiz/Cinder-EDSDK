@@ -145,7 +145,7 @@ void CameraBrowser::enumerateCameraList() {
 }
 
 void CameraBrowser::removeCamera(CameraRef camera) {
-    auto it = std::find_if(mCameras.begin(), mCameras.end(), [camera](CameraRef c){ return c->getPortName().compare(camera->getPortName()) == 0; });
+    auto it = std::find_if(mCameras.begin(), mCameras.end(), [camera](CameraRef c) { return c->getPortName().compare(camera->getPortName()) == 0; });
     if (it == mCameras.end()) {
         console() << "ERROR - failed to find removed camera:" << camera->getName() << " in camera browser's list" << std::endl;
         return;
