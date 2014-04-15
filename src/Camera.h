@@ -66,7 +66,7 @@ public:
     };
 
     static CameraRef create(EdsCameraRef camera);
-	~Camera();
+    ~Camera();
 
     template<typename T, typename Y>
     inline void connectRemovedHandler(T handler, Y* obj) { connectRemovedHandler(std::bind(handler, obj, std::placeholders::_1)); }

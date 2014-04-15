@@ -17,7 +17,7 @@ typedef std::shared_ptr<class CameraBrowser> CameraBrowserRef;
 class CameraBrowser : public std::enable_shared_from_this<CameraBrowser>, private boost::noncopyable {
 public:
     static CameraBrowserRef instance();
-	~CameraBrowser();
+    ~CameraBrowser();
 
     template<typename T, typename Y>
     inline void connectAddedHandler(T handler, Y* obj) { connectAddedHandler(std::bind(handler, obj, std::placeholders::_1)); }
