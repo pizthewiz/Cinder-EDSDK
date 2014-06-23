@@ -128,13 +128,13 @@ void SimpleTetherApp::didRemoveCamera(CameraRef camera) {
 
 void SimpleTetherApp::didAddFile(CameraRef camera, CameraFileRef file) {
 //    fs::path destinationFolderPath = expandPath(fs::path("~/Desktop/Captures"));
-//    camera->requestDownloadFile(file, destinationFolderPath, [this](EdsError error, ci::fs::path outputFilePath) {
+//    camera->requestDownloadFile(file, destinationFolderPath, [&](EdsError error, ci::fs::path outputFilePath) {
 //        if (error == EDS_ERR_OK) {
 //            console() << "image downloaded to '" << outputFilePath << "'" << std::endl;
 //        }
 //    });
 
-    camera->requestReadFile(file, [this](EdsError error, ci::Surface surface) {
+    camera->requestReadFile(file, [&](EdsError error, ci::Surface surface) {
         if (error == EDS_ERR_OK) {
             mPhotoTexture = gl::Texture(surface);
         }
