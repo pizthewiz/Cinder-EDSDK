@@ -16,11 +16,11 @@ namespace Cinder { namespace EDSDK {
 
 #pragma mark CAMERA FILE
 
-CameraFileRef CameraFile::create(EdsDirectoryItemRef directoryItem) {
+CameraFileRef CameraFile::create(const EdsDirectoryItemRef& directoryItem) {
     return CameraFileRef(new CameraFile(directoryItem))->shared_from_this();
 }
 
-CameraFile::CameraFile(EdsDirectoryItemRef directoryItem) {
+CameraFile::CameraFile(const EdsDirectoryItemRef& directoryItem) {
     if (!directoryItem) {
         throw Exception();
     }
@@ -40,21 +40,13 @@ CameraFile::~CameraFile() {
     mDirectoryItem = NULL;
 }
 
-std::string CameraFile::getName() const {
-    return std::string(mDirectoryItemInfo.szFileName);
-}
-
-uint32_t CameraFile::getSize() const {
-    return mDirectoryItemInfo.size;
-}
-
 #pragma mark - CAMERA
 
-CameraRef Camera::create(EdsCameraRef camera) {
+CameraRef Camera::create(const EdsCameraRef& camera) {
     return CameraRef(new Camera(camera))->shared_from_this();
 }
 
-Camera::Camera(EdsCameraRef camera) {
+Camera::Camera(const EdsCameraRef& camera) {
     if (!camera) {
         throw Exception();
     }
@@ -106,19 +98,6 @@ void Camera::connectRemovedHandler(const std::function<void(CameraRef)>& handler
 
 void Camera::connectFileAddedHandler(const std::function<void(CameraRef, CameraFileRef)>& handler) {
     mFileAddedHandler = handler;
-}
-
-std::string Camera::getName() const {
-    return std::string(mDeviceInfo.szDeviceDescription);
-}
-
-
-std::string Camera::getPortName() const {
-    return std::string(mDeviceInfo.szPortName);
-}
-
-bool Camera::hasOpenSession() const {
-    return mHasOpenSession;
 }
 
 EdsError Camera::requestOpenSession(const Settings &settings) {
@@ -181,7 +160,7 @@ EdsError Camera::requestTakePicture() {
     return error;
 }
 
-void Camera::requestDownloadFile(const CameraFileRef file, const fs::path destinationFolderPath, std::function<void(EdsError error, ci::fs::path outputFilePath)> callback) {
+void Camera::requestDownloadFile(const CameraFileRef& file, const fs::path& destinationFolderPath, const std::function<void(EdsError error, ci::fs::path outputFilePath)>& callback) {
     // check if destination exists and create if not
     if (!fs::exists(destinationFolderPath)) {
         bool status = fs::create_directories(destinationFolderPath);
@@ -220,7 +199,7 @@ download_cleanup:
     callback(error, filePath);
 }
 
-void Camera::requestReadFile(const CameraFileRef file, std::function<void(EdsError error, ci::Surface8u surface)> callback) {
+void Camera::requestReadFile(const CameraFileRef& file, const std::function<void(EdsError error, ci::Surface8u surface)>& callback) {
     Buffer buffer = NULL;
     ci::Surface surface;
 
@@ -306,7 +285,7 @@ EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 in
 
 EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inParam, EdsVoid* inContext) {
     Camera* c = (Camera*)inContext;
-    CameraRef camera = CameraBrowser::instance()->cameraForPortName(c->getPortName());
+    CameraRef camera = c->shared_from_this();
     switch (inEvent) {
         case kEdsStateEvent_WillSoonShutDown:
             if (camera->mHasOpenSession && camera->mShouldKeepAlive) {

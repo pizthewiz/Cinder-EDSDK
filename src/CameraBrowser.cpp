@@ -92,10 +92,6 @@ void CameraBrowser::start() {
 //    mIsBrowsing = false;
 //}
 
-const std::vector<CameraRef>& CameraBrowser::getCameras() const {
-    return mCameras;
-}
-
 #pragma mark - PRIVATE
 
 void CameraBrowser::enumerateCameraList() {
@@ -144,7 +140,7 @@ void CameraBrowser::enumerateCameraList() {
     EdsRelease(cameraList);
 }
 
-void CameraBrowser::removeCamera(CameraRef camera) {
+void CameraBrowser::removeCamera(const CameraRef& camera) {
     auto it = std::find_if(mCameras.begin(), mCameras.end(), [camera](CameraRef c) { return c->getPortName().compare(camera->getPortName()) == 0; });
     if (it == mCameras.end()) {
         console() << "ERROR - failed to find removed camera:" << camera->getName() << " in camera browser's list" << std::endl;
@@ -158,7 +154,7 @@ void CameraBrowser::removeCamera(CameraRef camera) {
     }
 }
 
-CameraRef CameraBrowser::cameraForPortName(const std::string name) const {
+CameraRef CameraBrowser::cameraForPortName(const std::string& name) const {
     CameraRef camera = NULL;
     auto it = std::find_if(mCameras.begin(), mCameras.end(), [name](CameraRef c){ return c->getPortName().compare(name) == 0; });
     if (it != mCameras.end()) {

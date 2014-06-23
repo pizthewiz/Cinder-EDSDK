@@ -33,13 +33,15 @@ public:
     void start();
 //    void stop();
 
-    const std::vector<CameraRef>& getCameras() const;
+    inline std::vector<CameraRef>& getCameras() {
+        return mCameras;
+    }
 
 private:
     CameraBrowser();
     void enumerateCameraList();
-    void removeCamera(CameraRef camera);
-    CameraRef cameraForPortName(const std::string name) const;
+    void removeCamera(const CameraRef& camera);
+    CameraRef cameraForPortName(const std::string& name) const;
 
     static EdsError EDSCALLBACK handleCameraAdded(EdsVoid* inContext);
 
