@@ -37,9 +37,9 @@ void CaptureApp::didAddFile(CameraRef camera, CameraFileRef file) {
 - Unarchive
 - Move the _EDSDK_ folder into _Cinder-EDSDK/lib_
 
-Cinder-EDSDK has only been tested with the dev branch of the [Cinder repository](https://github.com/Cinder/Cinder) on OS X 10.9.1 with EDSDK 2.13.2+. The application target must be built i386 as the EDSDK-provided frameworks are not yet both built x86_64. Please see the [TODO](TODO.md) for the project status.
+Cinder-EDSDK has only been tested with the master branch of the [Cinder repository](https://github.com/Cinder/Cinder) on OS X 10.10.2 with EDSDK 2.15. The application target must be built `i386` as the EDSDK-provided frameworks are not yet both built `x86_64`. Please see the [TODO](TODO.md) for the project status.
 
-*NOTE* - due to a bug introduced in EDSDK 2.10, the `CameraBrowser` will only call the camera removed handler for cameras with an open session.
+*NOTE* - Due to a bug introduced in EDSDK 2.10, the `CameraBrowser` will only call the camera removed handler for cameras with an open session.
 
 ### GREETZ
 - [Red Paper Heart](http://www.redpaperheart.com)'s [Cinder-CanonSdk](https://github.com/redpaperheart/Cinder-CanonSdk)
