@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <cinder>
 <block
-    name="Cinder-EDSDK"
+    name="Canon EDSDK"
     id="com.chordedconstructions.fleshworld.cinder-edsdk"
     git="https://github.com/pizthewiz/Cinder-EDSDK.git"
     author="Jean-Pierre Mouilleseaux"
