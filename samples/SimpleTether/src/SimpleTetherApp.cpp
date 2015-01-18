@@ -1,6 +1,6 @@
 
 #include "cinder/app/AppNative.h"
-#include "cinder/Utilities.h"
+#include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 
@@ -10,17 +10,6 @@ using namespace ci;
 using namespace ci::app;
 using namespace Cinder::EDSDK;
 using namespace std;
-
-void drawTextureInRect(gl::Texture texture, Rectf rect, bool fit = true) {
-    if (fit) {
-        Rectf textureRect = Rectf(Vec2i::zero(), texture.getSize());
-        Rectf r = textureRect.getCenteredFit(rect, true);
-        gl::draw(texture, r);
-    } else {
-        Area a =  Area(rect.getCenteredFit(texture.getBounds(), true));
-        gl::draw(texture, a, rect);
-    }
-}
 
 class SimpleTetherApp : public AppNative {
 public:
@@ -38,7 +27,7 @@ public:
 
 private:
     CameraRef mCamera;
-    gl::Texture mPhotoTexture;
+    gl::TextureRef mPhotoTexture;
 };
 
 void SimpleTetherApp::prepareSettings(Settings* settings) {
@@ -73,7 +62,8 @@ void SimpleTetherApp::draw() {
 
     if (mPhotoTexture != NULL) {
         gl::color(Color::white());
-        drawTextureInRect(mPhotoTexture, Rectf(Vec2i::zero(), getWindowSize()), false);
+        Rectf r = Rectf(ivec2(0), mPhotoTexture->getSize()).getCenteredFill(Rectf(ivec2(0), getWindowSize()), true);
+        gl::draw(mPhotoTexture, r);
     }
 }
 
@@ -136,7 +126,7 @@ void SimpleTetherApp::didAddFile(CameraRef camera, CameraFileRef file) {
 
     camera->requestReadFile(file, [&](EdsError error, ci::Surface surface) {
         if (error == EDS_ERR_OK) {
-            mPhotoTexture = gl::Texture(surface);
+            mPhotoTexture = gl::Texture::create(surface);
         }
     });
 }
