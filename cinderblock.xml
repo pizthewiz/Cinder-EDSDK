@@ -6,6 +6,7 @@
     git="https://github.com/pizthewiz/Cinder-EDSDK.git"
     author="Jean-Pierre Mouilleseaux"
     summary="Canon camera control"
+    version="2.15"
     url="https://github.com/pizthewiz/Cinder-EDSDK"
     library="http://www.usa.canon.com/cusa/consumer/standard_display/sdk_homepage"
     >
@@ -20,5 +21,6 @@
         <buildcopy destination="Frameworks">lib/EDSDK/Framework/DPP.framework</buildcopy>
         <frameworkPath>lib/EDSDK/Framework</frameworkPath>
     </platform>
+    <copyExclude>samples</copyExclude>
 </block>
 </cinder>
