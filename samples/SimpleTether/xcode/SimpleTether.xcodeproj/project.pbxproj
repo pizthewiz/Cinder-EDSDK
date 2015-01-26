@@ -16,28 +16,16 @@
 		29F9CFD931AF465ABF24FCEA /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B1D4CCB207440B1B9E8E97D /* Camera.cpp */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
-		70DF736FB7B14BBF974A4F70 /* EDSDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 037610C06CA5452BB8FFE121 /* EDSDK.framework */; };
+		70DF736FB7B14BBF974A4F70 /* EDSDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 037610C06CA5452BB8FFE121 /* EDSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		76AB69E2B23542678C327225 /* SimpleTetherApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E0651FBDF64083B994F69E /* SimpleTetherApp.cpp */; };
-		7BD3C8AAFC684786ADEF0C99 /* DPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABF865ACEC1A41778B30562E /* DPP.framework */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		D735FB267F304F8D8B43D108 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 19D2FEF7928B40E5A25F57CD /* CinderApp.icns */; };
 		D8047142018B4BFE9766104C /* EDSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 037610C06CA5452BB8FFE121 /* EDSDK.framework */; };
 		D8E73AA91A6B3303006D1EF9 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8E73AA81A6B3303006D1EF9 /* AVFoundation.framework */; };
 		D8E73AAB1A6B330C006D1EF9 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8E73AAA1A6B330C006D1EF9 /* CoreMedia.framework */; };
-		FB2AAFA9B8E448039ED32490 /* DPP.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = ABF865ACEC1A41778B30562E /* DPP.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		AC86EE2F7F8747DE971B8960 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				FB2AAFA9B8E448039ED32490 /* DPP.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		E4B9773DEAA84A2888913B97 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -98,7 +86,6 @@
 				00B784B50FF439BC000DE1D7 /* AudioUnit.framework in Frameworks */,
 				00B784B60FF439BC000DE1D7 /* CoreAudio.framework in Frameworks */,
 				D8047142018B4BFE9766104C /* EDSDK.framework in Frameworks */,
-				7BD3C8AAFC684786ADEF0C99 /* DPP.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,7 +251,6 @@
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				E4B9773DEAA84A2888913B97 /* CopyFiles */,
-				AC86EE2F7F8747DE971B8960 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -282,6 +268,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0620;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "SimpleTether" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -385,7 +372,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
 				CINDER_PATH = ../../../../..;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -393,6 +379,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include";
 			};
@@ -402,7 +389,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
 				CINDER_PATH = ../../../../..;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
