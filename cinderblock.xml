@@ -16,9 +16,7 @@
     <headerPattern>lib/EDSDK/Header/*.h</headerPattern>
     <platform os="macosx">
         <framework>lib/EDSDK/Framework/EDSDK.framework</framework>
-        <framework>lib/EDSDK/Framework/DPP.framework</framework>
         <buildcopy destination="Frameworks">lib/EDSDK/Framework/EDSDK.framework</buildcopy>
-        <buildcopy destination="Frameworks">lib/EDSDK/Framework/DPP.framework</buildcopy>
         <frameworkPath>lib/EDSDK/Framework</frameworkPath>
     </platform>
     <copyExclude>samples</copyExclude>
