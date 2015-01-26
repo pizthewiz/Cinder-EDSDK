@@ -11,7 +11,7 @@
     library="http://www.usa.canon.com/cusa/consumer/standard_display/sdk_homepage"
     >
     <supports os="macosx" />
-    <headerPattern>src/*.h</headerPattern>
+    <headerPattern>include/*.h</headerPattern>
     <sourcePattern>src/*.cpp</sourcePattern>
     <headerPattern>lib/EDSDK/Header/*.h</headerPattern>
     <platform os="macosx">
