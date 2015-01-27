@@ -61,6 +61,7 @@ Camera::Camera(const EdsCameraRef& camera) {
     }
 
     mHasOpenSession = false;
+    mIsLiveView = false;
 
     // set event handlers
     error = EdsSetObjectEventHandler(mCamera, kEdsObjectEvent_All, Camera::handleObjectEvent, this);
@@ -246,6 +247,120 @@ read_cleanup:
 
     callback(error, surface);
 }
+    
+
+void Camera::startLiveView()
+{
+    console() << "start live view" << std::endl;
+    EdsError err = EDS_ERR_OK;
+    
+    // Get the output device for the live view image
+    EdsUInt32 device;
+    err = EdsGetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device );
+    
+    // PC live view starts by setting the PC as the output device for the live view image.
+    if(err == EDS_ERR_OK)
+    {
+        device |= kEdsEvfOutputDevice_PC;
+        err = EdsSetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
+        mIsLiveView = true;
+    }
+    
+    // A property change event notification is issued from the camera if property settings are made successfully.
+    // Start downloading of the live view image once the property change notification arrives.
+}
+
+void Camera::endLiveView()
+{
+    EdsError err = EDS_ERR_OK;
+    
+    // Get the output device for the live view image
+    EdsUInt32 device;
+    err = EdsGetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device );
+    
+    // PC live view ends if the PC is disconnected from the live view image output device.
+    if(err == EDS_ERR_OK)
+    {
+        device &= ~kEdsEvfOutputDevice_PC;
+        err = EdsSetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
+    }
+    
+    mIsLiveView = false;
+}
+
+void Camera::toggleLiveView()
+{
+    if (mIsLiveView) {
+        endLiveView();
+    }
+    else {
+        startLiveView();
+    }
+}
+    
+EdsError Camera::requestDownloadEvfData( ci::Surface8u& surface )
+{
+    if( !mIsLiveView ){
+        console() << "No live view" << std::endl;
+        startLiveView();
+        return EDS_ERR_OK;
+    }
+
+    EdsError err = EDS_ERR_OK;
+    EdsStreamRef stream = NULL;
+    EdsEvfImageRef evfImage = NULL;
+
+    // Create memory stream.
+    err = EdsCreateMemoryStream( 0, &stream);
+
+    // Create EvfImageRef.
+    if(err == EDS_ERR_OK) {
+        err = EdsCreateEvfImageRef(stream, &evfImage);
+    }
+
+    // Download live view image data.
+    if(err == EDS_ERR_OK){
+        err = EdsDownloadEvfImage(mCamera, evfImage);
+    }
+
+    // Get the incidental data of the image.
+    if(err == EDS_ERR_OK){
+        // Get the zoom ratio
+        EdsUInt32 zoom;
+        EdsGetPropertyData(evfImage, kEdsPropID_Evf_ZoomPosition, 0, sizeof(zoom), &zoom );
+
+        // Get the focus and zoom border position
+        EdsPoint point;
+        EdsGetPropertyData(evfImage, kEdsPropID_Evf_ZoomPosition, 0 , sizeof(point), &point);
+    }
+
+    // Display image
+    EdsUInt32 length;
+    unsigned char* image_data;
+    EdsGetLength( stream, &length );
+    if( length <= 0 ) return EDS_ERR_OK;
+
+    EdsGetPointer( stream, (EdsVoid**)&image_data );
+
+    // reserve memory
+    Buffer buffer( image_data, length );
+    surface = Surface( loadImage( DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg" ) );
+//    bFrameNew = true;
+    
+    // Release stream
+    if(stream != NULL) {
+        EdsRelease(stream);
+        stream = NULL;
+    }
+    // Release evfImage
+    if(evfImage != NULL) {
+        EdsRelease(evfImage);
+        evfImage = NULL;
+    }
+    
+    return EDS_ERR_OK;
+}
+    
 
 #pragma mark - CALLBACKS
 
