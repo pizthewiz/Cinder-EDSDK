@@ -16,6 +16,7 @@ public:
     void prepareSettings(Settings* settings);
     void setup();
     void keyDown(KeyEvent event);
+    void update();
     void draw();
 
     void browserDidAddCamera(CameraRef camera);
@@ -44,6 +45,11 @@ void SimpleTetherApp::setup() {
 
 void SimpleTetherApp::keyDown(KeyEvent event) {
     switch (event.getCode()) {
+        case app::KeyEvent::KEY_l:
+            if (mCamera != NULL && mCamera->hasOpenSession()) {
+                mCamera->toggleLiveView();
+            }
+            break;
         case app::KeyEvent::KEY_SPACE:
             if (mCamera != NULL && mCamera->hasOpenSession()) {
                 mCamera->requestTakePicture();
@@ -54,6 +60,17 @@ void SimpleTetherApp::keyDown(KeyEvent event) {
             break;
         default:
             break;
+    }
+}
+
+void SimpleTetherApp::update() {
+    
+    if ( mCamera != NULL && mCamera->hasOpenSession() && mCamera->isLiveViewing() ) {
+        ci::Surface8u surface;
+        mCamera->requestDownloadEvfData( surface );
+        if ( surface != NULL ) {
+            mPhotoTexture = gl::Texture::create(surface);
+        }
     }
 }
 
