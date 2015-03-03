@@ -58,7 +58,7 @@ void SimpleTetherApp::keyDown(KeyEvent event) {
 }
 
 void SimpleTetherApp::draw() {
-	gl::clear(Color::black());
+	gl::clear();
 
     if (mPhotoTexture != NULL) {
         gl::color(Color::white());
