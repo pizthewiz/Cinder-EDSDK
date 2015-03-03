@@ -1,8 +1,4 @@
 
-#ifdef __OBJC__
-    #import <Cocoa/Cocoa.h>
-#endif
-
 #if defined( __cplusplus )
 	#include "cinder/Cinder.h"
 	
