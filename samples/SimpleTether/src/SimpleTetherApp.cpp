@@ -1,5 +1,5 @@
 
-#include "cinder/app/AppNative.h"
+#include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
@@ -11,9 +11,8 @@ using namespace ci::app;
 using namespace Cinder::EDSDK;
 using namespace std;
 
-class SimpleTetherApp : public AppNative {
+class SimpleTetherApp : public App {
 public:
-    void prepareSettings(Settings* settings);
     void setup();
     void keyDown(KeyEvent event);
     void draw();
@@ -29,11 +28,6 @@ private:
     CameraRef mCamera;
     gl::TextureRef mPhotoTexture;
 };
-
-void SimpleTetherApp::prepareSettings(Settings* settings) {
-    settings->enableHighDensityDisplay();
-    settings->setWindowSize(640, 480);
-}
 
 void SimpleTetherApp::setup() {
     CameraBrowser::instance()->connectAddedHandler(&SimpleTetherApp::browserDidAddCamera, this);
@@ -131,4 +125,7 @@ void SimpleTetherApp::didAddFile(CameraRef camera, CameraFileRef file) {
     });
 }
 
-CINDER_APP_NATIVE(SimpleTetherApp, RendererGl)
+CINDER_APP(SimpleTetherApp, RendererGl, [](App::Settings* settings) {
+    settings->setHighDensityDisplayEnabled();
+    settings->setWindowSize(640, 480);
+})
