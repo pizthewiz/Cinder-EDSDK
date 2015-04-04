@@ -64,13 +64,12 @@ void SimpleTetherApp::keyDown(KeyEvent event) {
 }
 
 void SimpleTetherApp::update() {
-    
-    if ( mCamera != NULL && mCamera->hasOpenSession() && mCamera->isLiveViewing() ) {
-        ci::Surface8u surface;
-        mCamera->requestDownloadEvfData( surface );
-        if ( surface != NULL ) {
-            mPhotoTexture = gl::Texture::create(surface);
-        }
+    if (mCamera != NULL && mCamera->hasOpenSession() && mCamera->isLiveViewActive()) {
+        mCamera->requestLiveViewImage([&](EdsError error, ci::Surface8u surface) {
+            if (error == EDS_ERR_OK) {
+                mPhotoTexture = gl::Texture::create(surface);
+            }
+        });
     }
 }
 

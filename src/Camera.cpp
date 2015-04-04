@@ -3,7 +3,7 @@
 //  Cinder-EDSDK
 //
 //  Created by Jean-Pierre Mouilleseaux on 08 Dec 2013.
-//  Copyright 2013-2014 Chorded Constructions. All rights reserved.
+//  Copyright 2013-2015 Chorded Constructions. All rights reserved.
 //
 
 #include "Camera.h"
@@ -61,7 +61,7 @@ Camera::Camera(const EdsCameraRef& camera) {
     }
 
     mHasOpenSession = false;
-    mIsLiveView = false;
+    mIsLiveViewActive = false;
 
     // set event handlers
     error = EdsSetObjectEventHandler(mCamera, kEdsObjectEvent_All, Camera::handleObjectEvent, this);
@@ -81,6 +81,10 @@ Camera::Camera(const EdsCameraRef& camera) {
 Camera::~Camera() {
     mRemovedHandler = NULL;
     mFileAddedHandler = NULL;
+
+    if (mIsLiveViewActive) {
+        requestStopLiveView();
+    }
 
     if (mHasOpenSession) {
         requestCloseSession();
@@ -247,120 +251,132 @@ read_cleanup:
 
     callback(error, surface);
 }
-    
 
-void Camera::startLiveView()
-{
-    console() << "start live view" << std::endl;
-    EdsError err = EDS_ERR_OK;
-    
-    // Get the output device for the live view image
+EdsError Camera::requestStartLiveView() {
+    if (!mHasOpenSession) {
+        return EDS_ERR_SESSION_NOT_OPEN;
+    }
+    if (mIsLiveViewActive) {
+        return EDS_ERR_INTERNAL_ERROR;
+    }
+
     EdsUInt32 device;
-    err = EdsGetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device );
-    
-    // PC live view starts by setting the PC as the output device for the live view image.
-    if(err == EDS_ERR_OK)
-    {
-        device |= kEdsEvfOutputDevice_PC;
-        err = EdsSetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
-        mIsLiveView = true;
-    }
-    
-    // A property change event notification is issued from the camera if property settings are made successfully.
-    // Start downloading of the live view image once the property change notification arrives.
-}
-
-void Camera::endLiveView()
-{
-    EdsError err = EDS_ERR_OK;
-    
-    // Get the output device for the live view image
-    EdsUInt32 device;
-    err = EdsGetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device );
-    
-    // PC live view ends if the PC is disconnected from the live view image output device.
-    if(err == EDS_ERR_OK)
-    {
-        device &= ~kEdsEvfOutputDevice_PC;
-        err = EdsSetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
-    }
-    
-    mIsLiveView = false;
-}
-
-void Camera::toggleLiveView()
-{
-    if (mIsLiveView) {
-        endLiveView();
-    }
-    else {
-        startLiveView();
-    }
-}
-    
-EdsError Camera::requestDownloadEvfData( ci::Surface8u& surface )
-{
-    if( !mIsLiveView ){
-        console() << "No live view" << std::endl;
-        startLiveView();
-        return EDS_ERR_OK;
+    EdsError error = EdsGetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to get output device for Live View" << std::endl;
+        return error;
     }
 
-    EdsError err = EDS_ERR_OK;
-    EdsStreamRef stream = NULL;
-    EdsEvfImageRef evfImage = NULL;
-
-    // Create memory stream.
-    err = EdsCreateMemoryStream( 0, &stream);
-
-    // Create EvfImageRef.
-    if(err == EDS_ERR_OK) {
-        err = EdsCreateEvfImageRef(stream, &evfImage);
+    // connect PC to Live View output device
+    device |= kEdsEvfOutputDevice_PC;
+    error = EdsSetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to set output device to connect PC to Live View output device" << std::endl;
+        return error;
     }
 
-    // Download live view image data.
-    if(err == EDS_ERR_OK){
-        err = EdsDownloadEvfImage(mCamera, evfImage);
-    }
+    mIsLiveViewActive = true;
 
-    // Get the incidental data of the image.
-    if(err == EDS_ERR_OK){
-        // Get the zoom ratio
-        EdsUInt32 zoom;
-        EdsGetPropertyData(evfImage, kEdsPropID_Evf_ZoomPosition, 0, sizeof(zoom), &zoom );
-
-        // Get the focus and zoom border position
-        EdsPoint point;
-        EdsGetPropertyData(evfImage, kEdsPropID_Evf_ZoomPosition, 0 , sizeof(point), &point);
-    }
-
-    // Display image
-    EdsUInt32 length;
-    unsigned char* image_data;
-    EdsGetLength( stream, &length );
-    if( length <= 0 ) return EDS_ERR_OK;
-
-    EdsGetPointer( stream, (EdsVoid**)&image_data );
-
-    // reserve memory
-    Buffer buffer( image_data, length );
-    surface = Surface( loadImage( DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg" ) );
-//    bFrameNew = true;
-    
-    // Release stream
-    if(stream != NULL) {
-        EdsRelease(stream);
-        stream = NULL;
-    }
-    // Release evfImage
-    if(evfImage != NULL) {
-        EdsRelease(evfImage);
-        evfImage = NULL;
-    }
-    
     return EDS_ERR_OK;
 }
-    
+
+EdsError Camera::requestStopLiveView() {
+    if (!mIsLiveViewActive) {
+        return EDS_ERR_INTERNAL_ERROR;
+    }
+
+    EdsUInt32 device;
+    EdsError error = EdsGetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to get output device for Live View" << std::endl;
+        return error;
+    }
+
+    // disconnect PC from Live View output device
+    device &= ~kEdsEvfOutputDevice_PC;
+    error = EdsSetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to set output device to disconnect PC from Live View output device" << std::endl;
+        return error;
+    }
+
+    mIsLiveViewActive = false;
+
+    return EDS_ERR_OK;
+}
+
+void Camera::toggleLiveView() {
+    if (mIsLiveViewActive) {
+        requestStopLiveView();
+    } else {
+        requestStartLiveView();
+    }
+}
+
+void Camera::requestLiveViewImage(const std::function<void(EdsError error, ci::Surface8u surface)>& callback) {
+    EdsError error = EDS_ERR_OK;
+    EdsStreamRef stream = NULL;
+    EdsEvfImageRef evfImage = NULL;
+    Buffer buffer = NULL;
+    ci::Surface surface;
+
+    if (!mIsLiveViewActive) {
+        error = EDS_ERR_INTERNAL_ERROR;
+        goto cleanup;
+    }
+
+    error = EdsCreateMemoryStream(0, &stream);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to create memory stream" << std::endl;
+        goto cleanup;
+    }
+
+    error = EdsCreateEvfImageRef(stream, &evfImage);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to create Evf image" << std::endl;
+        goto cleanup;
+    }
+
+    error = EdsDownloadEvfImage(mCamera, evfImage);
+    if (error != EDS_ERR_OK) {
+        if (error == EDS_ERR_OBJECT_NOTREADY) {
+            console() << "ERROR - failed to download Evf image, not ready yet" << std::endl;
+        } else {
+            console() << "ERROR - failed to download Evf image" << std::endl;
+        }
+        goto cleanup;
+    }
+
+    EdsUInt32 length;
+    error = EdsGetLength(stream, &length);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to get Evf image length" << std::endl;
+        goto cleanup;
+    }
+    if (length == 0) {
+        goto cleanup;
+    }
+
+    void* data;
+    error = EdsGetPointer(stream, (EdsVoid**)&data);
+    if (error != EDS_ERR_OK) {
+        console() << "ERROR - failed to get pointer from stream" << std::endl;
+        goto cleanup;
+    }
+
+    buffer = Buffer(data, length);
+    surface = Surface(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
+
+cleanup:
+    if (stream) {
+        EdsRelease(stream);
+    }
+    if (evfImage) {
+        EdsRelease(evfImage);
+    }
+
+    callback(error, surface);
+}
 
 #pragma mark - CALLBACKS
 
@@ -395,6 +411,9 @@ EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inR
 }
 
 EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 inPropertyID, EdsUInt32 inParam, EdsVoid* inContext) {
+    if (inPropertyID == kEdsPropID_Evf_OutputDevice && inEvent == kEdsPropertyEvent_PropertyChanged) {
+//        console() << "output device changed, Live View possibly ready" << std::endl;
+    }
     return EDS_ERR_OK;
 }
 

@@ -3,7 +3,7 @@
 //  Cinder-EDSDK
 //
 //  Created by Jean-Pierre Mouilleseaux on 08 Dec 2013.
-//  Copyright 2013-2014 Chorded Constructions. All rights reserved.
+//  Copyright 2013-2015 Chorded Constructions. All rights reserved.
 //
 
 #pragma once
@@ -95,13 +95,14 @@ public:
     EdsError requestTakePicture();
     void requestDownloadFile(const CameraFileRef& file, const ci::fs::path& destinationFolderPath, const std::function<void(EdsError error, ci::fs::path outputFilePath)>& callback);
     void requestReadFile(const CameraFileRef& file, const std::function<void(EdsError error, ci::Surface8u surface)>& callback);
-    
-    void startLiveView();
-    void endLiveView();
+
+    inline bool isLiveViewActive() const {
+        return mIsLiveViewActive;
+    };
+    EdsError requestStartLiveView();
+    EdsError requestStopLiveView();
     void toggleLiveView();
-    EdsError requestDownloadEvfData( ci::Surface8u& surface );
-    bool isLiveViewing() const { return mIsLiveView; };
-    
+    void requestLiveViewImage(const std::function<void(EdsError error, ci::Surface8u surface)>& callback);
 
 private:
     Camera(const EdsCameraRef& camera);
@@ -116,7 +117,7 @@ private:
     EdsDeviceInfo mDeviceInfo;
     bool mHasOpenSession;
     bool mShouldKeepAlive;
-    bool mIsLiveView;
+    bool mIsLiveViewActive;
 };
 
 }}
