@@ -3,7 +3,7 @@
 //  Cinder-EDSDK
 //
 //  Created by Jean-Pierre Mouilleseaux on 08 Dec 2013.
-//  Copyright 2013-2014 Chorded Constructions. All rights reserved.
+//  Copyright 2013-2015 Chorded Constructions. All rights reserved.
 //
 
 #pragma once
@@ -43,7 +43,7 @@ private:
     void removeCamera(const CameraRef& camera);
     CameraRef cameraForPortName(const std::string& name) const;
 
-    static EdsError EDSCALLBACK handleCameraAdded(EdsVoid* inContext);
+    static EdsError EDSCALLBACK handleCameraAdded(EdsVoid* context);
 
     static CameraBrowserRef sInstance;
     std::function<void (CameraRef)> mAddedHandler;

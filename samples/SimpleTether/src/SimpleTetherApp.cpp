@@ -39,12 +39,12 @@ void SimpleTetherApp::setup() {
 void SimpleTetherApp::keyDown(KeyEvent event) {
     switch (event.getCode()) {
         case app::KeyEvent::KEY_l:
-            if (mCamera != NULL && mCamera->hasOpenSession()) {
+            if (mCamera && mCamera->hasOpenSession()) {
                 mCamera->toggleLiveView();
             }
             break;
         case app::KeyEvent::KEY_SPACE:
-            if (mCamera != NULL && mCamera->hasOpenSession()) {
+            if (mCamera && mCamera->hasOpenSession()) {
                 mCamera->requestTakePicture();
             }
             break;
@@ -57,10 +57,10 @@ void SimpleTetherApp::keyDown(KeyEvent event) {
 }
 
 void SimpleTetherApp::update() {
-    if (mCamera != NULL && mCamera->hasOpenSession() && mCamera->isLiveViewActive()) {
-        mCamera->requestLiveViewImage([&](EdsError error, ci::Surface8u surface) {
+    if (mCamera && mCamera->hasOpenSession() && mCamera->isLiveViewActive()) {
+        mCamera->requestLiveViewImage([&](EdsError error, ci::SurfaceRef surface) {
             if (error == EDS_ERR_OK) {
-                mPhotoTexture = gl::Texture::create(surface);
+                mPhotoTexture = gl::Texture::create(*surface);
             }
         });
     }
@@ -69,7 +69,7 @@ void SimpleTetherApp::update() {
 void SimpleTetherApp::draw() {
 	gl::clear();
 
-    if (mPhotoTexture != NULL) {
+    if (mPhotoTexture) {
         gl::color(Color::white());
         Rectf r = Rectf(ivec2(0), mPhotoTexture->getSize()).getCenteredFill(Rectf(ivec2(0), getWindowSize()), true);
         gl::draw(mPhotoTexture, r);
@@ -80,7 +80,7 @@ void SimpleTetherApp::draw() {
 
 void SimpleTetherApp::browserDidAddCamera(CameraRef camera) {
     console() << "added a camera: " << camera->getName() << std::endl;
-    if (mCamera != NULL) {
+    if (mCamera) {
         return;
     }
 
@@ -106,7 +106,7 @@ void SimpleTetherApp::browserDidRemoveCamera(CameraRef camera) {
     }
 
     console() << "our camera was disconnected" << std::endl;
-    mCamera = NULL;
+    mCamera = nullptr;
 }
 
 void SimpleTetherApp::browserDidEnumerateCameras() {
@@ -122,7 +122,7 @@ void SimpleTetherApp::didRemoveCamera(CameraRef camera) {
     }
 
     console() << "our camera was disconnected" << std::endl;
-    mCamera = NULL;
+    mCamera = nullptr;
 }
 
 void SimpleTetherApp::didAddFile(CameraRef camera, CameraFileRef file) {
@@ -133,9 +133,9 @@ void SimpleTetherApp::didAddFile(CameraRef camera, CameraFileRef file) {
 //        }
 //    });
 
-    camera->requestReadFile(file, [&](EdsError error, ci::Surface surface) {
+    camera->requestReadFile(file, [&](EdsError error, ci::SurfaceRef surface) {
         if (error == EDS_ERR_OK) {
-            mPhotoTexture = gl::Texture::create(surface);
+            mPhotoTexture = gl::Texture::create(*surface);
         }
     });
 }

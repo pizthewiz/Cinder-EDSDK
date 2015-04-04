@@ -28,7 +28,7 @@ typedef std::shared_ptr<class CameraFile> CameraFileRef;
 class CameraFile : public std::enable_shared_from_this<CameraFile> {
 public:
     static CameraFileRef create(const EdsDirectoryItemRef& directoryItem);
-	~CameraFile();
+    ~CameraFile();
 
     inline std::string getName() const {
         return std::string(mDirectoryItemInfo.szFileName);
@@ -94,7 +94,7 @@ public:
 
     EdsError requestTakePicture();
     void requestDownloadFile(const CameraFileRef& file, const ci::fs::path& destinationFolderPath, const std::function<void(EdsError error, ci::fs::path outputFilePath)>& callback);
-    void requestReadFile(const CameraFileRef& file, const std::function<void(EdsError error, ci::Surface8u surface)>& callback);
+    void requestReadFile(const CameraFileRef& file, const std::function<void(EdsError error, ci::SurfaceRef surface)>& callback);
 
     inline bool isLiveViewActive() const {
         return mIsLiveViewActive;
@@ -102,14 +102,14 @@ public:
     EdsError requestStartLiveView();
     EdsError requestStopLiveView();
     void toggleLiveView();
-    void requestLiveViewImage(const std::function<void(EdsError error, ci::Surface8u surface)>& callback);
+    void requestLiveViewImage(const std::function<void(EdsError error, ci::SurfaceRef surface)>& callback);
 
 private:
     Camera(const EdsCameraRef& camera);
 
-    static EdsError EDSCALLBACK handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inRef, EdsVoid* inContext);
-    static EdsError EDSCALLBACK handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 inPropertyID, EdsUInt32 inParam, EdsVoid* inContext);
-    static EdsError EDSCALLBACK handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inParam, EdsVoid* inContext);
+    static EdsError EDSCALLBACK handleObjectEvent(EdsUInt32 event, EdsBaseRef ref, EdsVoid* context);
+    static EdsError EDSCALLBACK handlePropertyEvent(EdsUInt32 event, EdsUInt32 propertyID, EdsUInt32 param, EdsVoid* context);
+    static EdsError EDSCALLBACK handleStateEvent(EdsUInt32 event, EdsUInt32 param, EdsVoid* context);
 
     std::function<void (CameraRef)> mRemovedHandler;
     std::function<void (CameraRef, CameraFileRef)> mFileAddedHandler;

@@ -3,7 +3,7 @@
 //  Cinder-EDSDK
 //
 //  Created by Jean-Pierre Mouilleseaux on 08 Dec 2013.
-//  Copyright 2013-2014 Chorded Constructions. All rights reserved.
+//  Copyright 2013-2015 Chorded Constructions. All rights reserved.
 //
 
 #include "CameraBrowser.h"
@@ -19,12 +19,10 @@ CameraBrowserRef CameraBrowser::instance() {
     if (!sInstance) {
         sInstance = CameraBrowserRef(new CameraBrowser())->shared_from_this();
     }
-	return sInstance;
+    return sInstance;
 }
 
-CameraBrowser::CameraBrowser() {
-    mIsBrowsing = false;
-
+CameraBrowser::CameraBrowser() : mIsBrowsing(false) {
     EdsError error = EdsInitializeSDK();
     if (error != EDS_ERR_OK) {
         console() << "ERROR - failed to initialize SDK" << std::endl;
@@ -103,7 +101,7 @@ void CameraBrowser::enumerateCameraList() {
         return;
     }
 
-	EdsUInt32 cameraCount = 0;
+    EdsUInt32 cameraCount = 0;
     error = EdsGetChildCount(cameraList, &cameraCount);
     if (error != EDS_ERR_OK) {
         console() << "ERROR - failed to get camera count" << std::endl;
@@ -119,7 +117,7 @@ void CameraBrowser::enumerateCameraList() {
             continue;
         }
 
-        CameraRef camera = NULL;
+        CameraRef camera = nullptr;
         try {
             camera = Camera::create(cam);
         } catch (...) {
@@ -155,7 +153,7 @@ void CameraBrowser::removeCamera(const CameraRef& camera) {
 }
 
 CameraRef CameraBrowser::cameraForPortName(const std::string& name) const {
-    CameraRef camera = NULL;
+    CameraRef camera = nullptr;
     auto it = std::find_if(mCameras.begin(), mCameras.end(), [name](CameraRef c){ return c->getPortName().compare(name) == 0; });
     if (it != mCameras.end()) {
         camera = mCameras[it - mCameras.begin()];
@@ -165,9 +163,9 @@ CameraRef CameraBrowser::cameraForPortName(const std::string& name) const {
 
 #pragma mark - CALLBACKS
 
-EdsError EDSCALLBACK CameraBrowser::handleCameraAdded(EdsVoid* inContext) {
+EdsError EDSCALLBACK CameraBrowser::handleCameraAdded(EdsVoid* context) {
     // we are left to our own devices to determine which camera was added
-    ((CameraBrowser*)inContext)->enumerateCameraList();
+    ((CameraBrowser*)context)->enumerateCameraList();
     return EDS_ERR_OK;
 }
 

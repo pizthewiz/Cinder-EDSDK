@@ -46,7 +46,7 @@ CameraRef Camera::create(const EdsCameraRef& camera) {
     return CameraRef(new Camera(camera))->shared_from_this();
 }
 
-Camera::Camera(const EdsCameraRef& camera) {
+Camera::Camera(const EdsCameraRef& camera) : mHasOpenSession(false), mIsLiveViewActive(false) {
     if (!camera) {
         throw Exception();
     }
@@ -59,9 +59,6 @@ Camera::Camera(const EdsCameraRef& camera) {
         console() << "ERROR - failed to get device info" << std::endl;
         // TODO - NULL out mDeviceInfo
     }
-
-    mHasOpenSession = false;
-    mIsLiveViewActive = false;
 
     // set event handlers
     error = EdsSetObjectEventHandler(mCamera, kEdsObjectEvent_All, Camera::handleObjectEvent, this);
@@ -92,7 +89,7 @@ Camera::~Camera() {
 
     // NB - starting with EDSDK 2.10, this release will cause an EXC_BAD_ACCESS (code=EXC_I386_GPFLT) at the end of the runloop
 //    EdsRelease(mCamera);
-    mCamera = NULL;
+    mCamera = nullptr;
 }
 
 #pragma mark -
@@ -165,7 +162,7 @@ EdsError Camera::requestTakePicture() {
     return error;
 }
 
-void Camera::requestDownloadFile(const CameraFileRef& file, const fs::path& destinationFolderPath, const std::function<void(EdsError error, ci::fs::path outputFilePath)>& callback) {
+void Camera::requestDownloadFile(const CameraFileRef& file, const fs::path& destinationFolderPath, const std::function<void(EdsError error, fs::path outputFilePath)>& callback) {
     // check if destination exists and create if not
     if (!fs::exists(destinationFolderPath)) {
         bool status = fs::create_directories(destinationFolderPath);
@@ -204,9 +201,9 @@ download_cleanup:
     callback(error, filePath);
 }
 
-void Camera::requestReadFile(const CameraFileRef& file, const std::function<void(EdsError error, ci::Surface8u surface)>& callback) {
+void Camera::requestReadFile(const CameraFileRef& file, const std::function<void(EdsError error, SurfaceRef surface)>& callback) {
     Buffer buffer = NULL;
-    ci::Surface surface;
+    SurfaceRef surface = nullptr;
 
     EdsStreamRef stream = NULL;
     EdsError error = EdsCreateMemoryStream(0, &stream);
@@ -242,7 +239,7 @@ void Camera::requestReadFile(const CameraFileRef& file, const std::function<void
     }
 
     buffer = Buffer(data, length);
-    surface = Surface8u(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
+    surface = Surface::create(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
 
 read_cleanup:
     if (stream) {
@@ -313,12 +310,12 @@ void Camera::toggleLiveView() {
     }
 }
 
-void Camera::requestLiveViewImage(const std::function<void(EdsError error, ci::Surface8u surface)>& callback) {
+void Camera::requestLiveViewImage(const std::function<void(EdsError error, SurfaceRef surface)>& callback) {
     EdsError error = EDS_ERR_OK;
     EdsStreamRef stream = NULL;
     EdsEvfImageRef evfImage = NULL;
     Buffer buffer = NULL;
-    ci::Surface surface;
+    SurfaceRef surface = nullptr;
 
     if (!mIsLiveViewActive) {
         error = EDS_ERR_INTERNAL_ERROR;
@@ -365,7 +362,7 @@ void Camera::requestLiveViewImage(const std::function<void(EdsError error, ci::S
     }
 
     buffer = Buffer(data, length);
-    surface = Surface(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
+    surface = Surface::create(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
 
 cleanup:
     if (stream) {
@@ -380,13 +377,13 @@ cleanup:
 
 #pragma mark - CALLBACKS
 
-EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inRef, EdsVoid* inContext) {
-    Camera* c = (Camera*)inContext;
+EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 event, EdsBaseRef ref, EdsVoid* context) {
+    Camera* c = (Camera*)context;
     CameraRef camera = CameraBrowser::instance()->cameraForPortName(c->getPortName());
-    switch (inEvent) {
+    switch (event) {
         case kEdsObjectEvent_DirItemRequestTransfer: {
-            EdsDirectoryItemRef directoryItem = (EdsDirectoryItemRef)inRef;
-            CameraFileRef file = NULL;
+            EdsDirectoryItemRef directoryItem = (EdsDirectoryItemRef)ref;
+            CameraFileRef file = nullptr;
             try {
                 file = CameraFile::create(directoryItem);
             } catch (...) {
@@ -401,26 +398,26 @@ EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 inEvent, EdsBaseRef inR
             break;
         }
         default:
-            if (inRef) {
-                EdsRelease(inRef);
-                inRef = NULL;
+            if (ref) {
+                EdsRelease(ref);
+                ref = NULL;
             }
             break;
     }
     return EDS_ERR_OK;
 }
 
-EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsUInt32 inEvent, EdsUInt32 inPropertyID, EdsUInt32 inParam, EdsVoid* inContext) {
-    if (inPropertyID == kEdsPropID_Evf_OutputDevice && inEvent == kEdsPropertyEvent_PropertyChanged) {
+EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsUInt32 event, EdsUInt32 propertyID, EdsUInt32 param, EdsVoid* context) {
+    if (propertyID == kEdsPropID_Evf_OutputDevice && event == kEdsPropertyEvent_PropertyChanged) {
 //        console() << "output device changed, Live View possibly ready" << std::endl;
     }
     return EDS_ERR_OK;
 }
 
-EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 inEvent, EdsUInt32 inParam, EdsVoid* inContext) {
-    Camera* c = (Camera*)inContext;
+EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 event, EdsUInt32 param, EdsVoid* context) {
+    Camera* c = (Camera*)context;
     CameraRef camera = c->shared_from_this();
-    switch (inEvent) {
+    switch (event) {
         case kEdsStateEvent_WillSoonShutDown:
             if (camera->mHasOpenSession && camera->mShouldKeepAlive) {
                 EdsError error = EdsSendCommand(camera->mCamera, kEdsCameraCommand_ExtendShutDownTimer, 0);
