@@ -14,6 +14,7 @@ class SimpleTetherApp : public App {
 public:
     void setup();
     void keyDown(KeyEvent event);
+    void update();
     void draw();
 
     void browserDidAddCamera(CameraRef camera);
@@ -37,6 +38,11 @@ void SimpleTetherApp::setup() {
 
 void SimpleTetherApp::keyDown(KeyEvent event) {
     switch (event.getCode()) {
+        case app::KeyEvent::KEY_l:
+            if (mCamera != NULL && mCamera->hasOpenSession()) {
+                mCamera->toggleLiveView();
+            }
+            break;
         case app::KeyEvent::KEY_SPACE:
             if (mCamera != NULL && mCamera->hasOpenSession()) {
                 mCamera->requestTakePicture();
@@ -47,6 +53,16 @@ void SimpleTetherApp::keyDown(KeyEvent event) {
             break;
         default:
             break;
+    }
+}
+
+void SimpleTetherApp::update() {
+    if (mCamera != NULL && mCamera->hasOpenSession() && mCamera->isLiveViewActive()) {
+        mCamera->requestLiveViewImage([&](EdsError error, ci::Surface8u surface) {
+            if (error == EDS_ERR_OK) {
+                mPhotoTexture = gl::Texture::create(surface);
+            }
+        });
     }
 }
 

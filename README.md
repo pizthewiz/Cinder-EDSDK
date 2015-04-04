@@ -4,7 +4,7 @@
 `Cinder-EDSDK` is configured for Cinder's [glNext branch](https://github.com/Cinder/Cinder/tree/glNext), please use rev [0cfeedc4](https://github.com/pizthewiz/Cinder-EDSDK/commit/0cfeedc4aa0d3dc97c3c4208b0f7a973c188677c) for Cinder 0.8.6 support.
 
 ### FEATURES
-Image capture to memory or on-disk, camera keep-alive, simultaneous control of multiple cameras, camera connect and disconnect handling. It does *not* offer Live View support.
+Image capture to memory or on-disk, camera keep-alive, simultaneous control of multiple cameras, Live View and camera connect and disconnect handling.
 
 ### EXAMPLE
 ```C++
@@ -43,5 +43,6 @@ void CaptureApp::didAddFile(CameraRef camera, CameraFileRef file) {
 *NOTE* - Due to a bug introduced in EDSDK v2.10, the `CameraBrowser` will only call the camera removed handler for cameras with an open session.
 
 ### GREETZ
+- [@hezhao](https://github.com/hezhao) for contributing Live View support
 - [Red Paper Heart](http://www.redpaperheart.com)'s [Cinder-CanonSdk](https://github.com/redpaperheart/Cinder-CanonSdk)
 - [v002-Camera-Live](https://github.com/v002/v002-Camera-Live)
