@@ -1,5 +1,7 @@
+
 ### NOW
+- Consider wrapping Live View access with hasNewLiveViewFrame() and getLiveViewSurface() like Capture
 
 ### LATER
-- [ ] test with multiple cameras
-- [ ] Live View support, see 6.3.10 SAMPLE10 Live view
+- Test with multiple cameras
+- Test on Windows
