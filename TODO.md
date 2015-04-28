@@ -4,4 +4,4 @@
 
 ### LATER
 - Test with multiple cameras
-- Test on Windows
+- Consider exposing explicit press/release shutter methods to allow for long exposures like in [kylemcdonald/ofxEdsdk#32](https://github.com/kylemcdonald/ofxEdsdk/pull/32)
