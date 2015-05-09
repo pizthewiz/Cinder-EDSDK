@@ -202,7 +202,7 @@ download_cleanup:
 }
 
 void Camera::requestReadFile(const CameraFileRef& file, const std::function<void(EdsError error, SurfaceRef surface)>& callback) {
-    Buffer buffer = NULL;
+    BufferRef buffer = nullptr;
     SurfaceRef surface = nullptr;
 
     EdsStreamRef stream = NULL;
@@ -238,7 +238,7 @@ void Camera::requestReadFile(const CameraFileRef& file, const std::function<void
         goto read_cleanup;
     }
 
-    buffer = Buffer(data, length);
+    buffer = std::make_shared<Buffer>(data, length);
     surface = Surface::create(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
 
 read_cleanup:
@@ -314,7 +314,7 @@ void Camera::requestLiveViewImage(const std::function<void(EdsError error, Surfa
     EdsError error = EDS_ERR_OK;
     EdsStreamRef stream = NULL;
     EdsEvfImageRef evfImage = NULL;
-    Buffer buffer = NULL;
+    BufferRef buffer = nullptr;
     SurfaceRef surface = nullptr;
 
     if (!mIsLiveViewActive) {
@@ -361,7 +361,7 @@ void Camera::requestLiveViewImage(const std::function<void(EdsError error, Surfa
         goto cleanup;
     }
 
-    buffer = Buffer(data, length);
+    buffer = std::make_shared<Buffer>(data, length);
     surface = Surface::create(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
 
 cleanup:
