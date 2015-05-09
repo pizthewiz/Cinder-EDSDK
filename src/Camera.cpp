@@ -168,7 +168,7 @@ void Camera::requestDownloadFile(const CameraFileRef& file, const fs::path& dest
         bool status = fs::create_directories(destinationFolderPath);
         if (!status) {
             console() << "ERROR - failed to create destination folder path '" << destinationFolderPath << "'" << std::endl;
-            return callback(EDS_ERR_INTERNAL_ERROR, NULL);
+            return callback(EDS_ERR_INTERNAL_ERROR, "");
         }
     }
 
