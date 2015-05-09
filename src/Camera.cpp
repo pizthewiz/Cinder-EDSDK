@@ -238,7 +238,7 @@ void Camera::requestReadFile(const CameraFileRef& file, const std::function<void
         goto read_cleanup;
     }
 
-    buffer = std::make_shared<Buffer>(data, length);
+    buffer = Buffer::create(data, length);
     surface = Surface::create(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
 
 read_cleanup:
@@ -361,7 +361,7 @@ void Camera::requestLiveViewImage(const std::function<void(EdsError error, Surfa
         goto cleanup;
     }
 
-    buffer = std::make_shared<Buffer>(data, length);
+    buffer = Buffer::create(data, length);
     surface = Surface::create(loadImage(DataSourceBuffer::create(buffer), ImageSource::Options(), "jpg"));
 
 cleanup:
