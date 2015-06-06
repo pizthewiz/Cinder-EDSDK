@@ -1,7 +1,7 @@
 # Cinder-EDSDK
 `Cinder-EDSDK` is a [CinderBlock](http://libcinder.org/docs/welcome/CinderBlocks.html) to interact with Canon cameras. See Canon's [compatibility chart](http://www.usa.canon.com/cusa/consumer/standard_display/sdk_homepage#SDKQ7) for a list of cameras supported in their EDSDK.
 
-`Cinder-EDSDK` is configured for Cinder's [glNext branch](https://github.com/Cinder/Cinder/tree/glNext), please use rev [0cfeedc4](https://github.com/pizthewiz/Cinder-EDSDK/commit/0cfeedc4aa0d3dc97c3c4208b0f7a973c188677c) for Cinder 0.8.6 support.
+`Cinder-EDSDK` is meant to  be used with the upcoming 0.9.0 release of Cinder, please use rev [0cfeedc4](https://github.com/pizthewiz/Cinder-EDSDK/commit/0cfeedc4aa0d3dc97c3c4208b0f7a973c188677c) for Cinder 0.8.6 support.
 
 ### FEATURES
 Image capture to memory or on-disk, camera keep-alive, simultaneous control of multiple cameras, Live View and camera connect and disconnect handling.
