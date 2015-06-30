@@ -15,7 +15,6 @@
 		28BA54A9DA5B4A8FBF6469D3 /* CameraBrowser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E3DBA580EDB42B78E6BD721 /* CameraBrowser.cpp */; };
 		29F9CFD931AF465ABF24FCEA /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B1D4CCB207440B1B9E8E97D /* Camera.cpp */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
-		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
 		70DF736FB7B14BBF974A4F70 /* EDSDK.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 037610C06CA5452BB8FFE121 /* EDSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		76AB69E2B23542678C327225 /* SimpleTetherApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E0651FBDF64083B994F69E /* SimpleTetherApp.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -24,6 +23,7 @@
 		D880C2A51B2381CD00C2BAF6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D880C2A41B2381CD00C2BAF6 /* IOKit.framework */; };
 		D8E73AA91A6B3303006D1EF9 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8E73AA81A6B3303006D1EF9 /* AVFoundation.framework */; };
 		D8E73AAB1A6B330C006D1EF9 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8E73AAA1A6B330C006D1EF9 /* CoreMedia.framework */; };
+		D8FB03B41B42E2FD00515F6E /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8FB03B31B42E2FD00515F6E /* IOSurface.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -57,7 +57,6 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		2E3DBA580EDB42B78E6BD721 /* CameraBrowser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = CameraBrowser.cpp; path = ../../../src/CameraBrowser.cpp; sourceTree = "<group>"; };
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
-		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		62743D0AF73046FD9E6C6133 /* EDSDKTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EDSDKTypes.h; path = ../../../lib/EDSDK/Header/EDSDKTypes.h; sourceTree = "<group>"; };
 		6B1D4CCB207440B1B9E8E97D /* Camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = Camera.cpp; path = ../../../src/Camera.cpp; sourceTree = "<group>"; };
 		804A8F4FC4F140439EEAEE10 /* EDSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EDSDK.h; path = ../../../lib/EDSDK/Header/EDSDK.h; sourceTree = "<group>"; };
@@ -68,6 +67,7 @@
 		D880C2A41B2381CD00C2BAF6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		D8E73AA81A6B3303006D1EF9 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D8E73AAA1A6B330C006D1EF9 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		D8FB03B31B42E2FD00515F6E /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		F9AEC9235ED34F4ABAAE9464 /* CameraBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CameraBrowser.h; path = ../../../include/CameraBrowser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -76,13 +76,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8FB03B41B42E2FD00515F6E /* IOSurface.framework in Frameworks */,
 				D880C2A51B2381CD00C2BAF6 /* IOKit.framework in Frameworks */,
 				D8E73AA91A6B3303006D1EF9 /* AVFoundation.framework in Frameworks */,
 				D8E73AAB1A6B330C006D1EF9 /* CoreMedia.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				0091D8F90E81B9330029341E /* OpenGL.framework in Frameworks */,
 				5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */,
-				5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */,
 				00B784B30FF439BC000DE1D7 /* Accelerate.framework in Frameworks */,
 				00B784B40FF439BC000DE1D7 /* AudioToolbox.framework in Frameworks */,
 				00B784B50FF439BC000DE1D7 /* AudioUnit.framework in Frameworks */,
@@ -122,6 +122,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D8FB03B31B42E2FD00515F6E /* IOSurface.framework */,
 				D880C2A41B2381CD00C2BAF6 /* IOKit.framework */,
 				D8E73AA81A6B3303006D1EF9 /* AVFoundation.framework */,
 				D8E73AAA1A6B330C006D1EF9 /* CoreMedia.framework */,
@@ -129,7 +130,6 @@
 				00B784B00FF439BC000DE1D7 /* AudioToolbox.framework */,
 				00B784B10FF439BC000DE1D7 /* AudioUnit.framework */,
 				00B784B20FF439BC000DE1D7 /* CoreAudio.framework */,
-				5323E6B50EAFCA7E003A9687 /* QTKit.framework */,
 				5323E6B10EAFCA74003A9687 /* CoreVideo.framework */,
 				0091D8F80E81B9330029341E /* OpenGL.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
@@ -278,7 +278,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0620;
+				LastUpgradeCheck = 0700;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "SimpleTether" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -344,6 +344,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "\"$(CINDER_PATH)/lib/libcinder_d.a\"";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.chordedconstructions.fleshworld.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SimpleTether;
 				SYMROOT = ./build;
 				WRAPPER_EXTENSION = app;
@@ -371,6 +372,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "\"$(CINDER_PATH)/lib/libcinder.a\"";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.chordedconstructions.fleshworld.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SimpleTether;
 				STRIP_INSTALLED_PRODUCT = YES;
 				SYMROOT = ./build;
@@ -385,6 +387,7 @@
 				CINDER_PATH = ../../../../..;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				ENABLE_TESTABILITY = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\"";
