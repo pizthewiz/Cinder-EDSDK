@@ -9,6 +9,8 @@
 #include "Camera.h"
 #include "CameraBrowser.h"
 
+#include "cinder/Log.h"
+
 using namespace ci;
 using namespace ci::app;
 
@@ -30,7 +32,7 @@ CameraFile::CameraFile(const EdsDirectoryItemRef& directoryItem) {
 
     EdsError error = EdsGetDirectoryItemInfo(mDirectoryItem, &mDirectoryItemInfo);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to get directory item info" << std::endl;
+        CI_LOG_E("failed to get directory item info");
         throw Exception();
     }
 }
@@ -56,22 +58,22 @@ Camera::Camera(const EdsCameraRef& camera) : mHasOpenSession(false), mIsLiveView
 
     EdsError error = EdsGetDeviceInfo(mCamera, &mDeviceInfo);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to get device info" << std::endl;
+        CI_LOG_E("failed to get device info");
         // TODO - NULL out mDeviceInfo
     }
 
     // set event handlers
     error = EdsSetObjectEventHandler(mCamera, kEdsObjectEvent_All, Camera::handleObjectEvent, this);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to set object event handler" << std::endl;
+        CI_LOG_E("failed to set object event handler");
     }
     error = EdsSetPropertyEventHandler(mCamera, kEdsPropertyEvent_All, Camera::handlePropertyEvent, this);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to set property event handler" << std::endl;
+        CI_LOG_E("failed to set property event handler");
     }
     error = EdsSetCameraStateEventHandler(mCamera, kEdsStateEvent_All, Camera::handleStateEvent, this);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to set object event handler" << std::endl;
+        CI_LOG_E("failed to set object event handler");
     }
 }
 
@@ -109,7 +111,7 @@ EdsError Camera::requestOpenSession(const Settings &settings) {
 
     EdsError error = EdsOpenSession(mCamera);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to open camera session" << std::endl;
+        CI_LOG_E("failed to open camera session");
         return error;
     }
     mHasOpenSession = true;
@@ -118,7 +120,7 @@ EdsError Camera::requestOpenSession(const Settings &settings) {
     EdsUInt32 saveTo = settings.getPictureSaveLocation();
     error = EdsSetPropertyData(mCamera, kEdsPropID_SaveTo, 0, sizeof(saveTo) , &saveTo);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to set save destination host/device" << std::endl;
+        CI_LOG_E("failed to set save destination host/device");
         return error;
     }
 
@@ -127,7 +129,7 @@ EdsError Camera::requestOpenSession(const Settings &settings) {
         EdsCapacity capacity = {0x7FFFFFFF, 0x1000, 1};
         error = EdsSetCapacity(mCamera, capacity);
         if (error != EDS_ERR_OK) {
-            console() << "ERROR - failed to set capacity of host" << std::endl;
+            CI_LOG_E("failed to set capacity of host");
             return error;
         }
     }
@@ -142,7 +144,7 @@ EdsError Camera::requestCloseSession() {
 
     EdsError error = EdsCloseSession(mCamera);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to close camera session" << std::endl;
+        CI_LOG_E("failed to close camera session");
         return error;
     }
 
@@ -157,7 +159,7 @@ EdsError Camera::requestTakePicture() {
 
     EdsError error = EdsSendCommand(mCamera, kEdsCameraCommand_TakePicture, 0);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to take picture" << std::endl;
+        CI_LOG_E("failed to take picture");
     }
     return error;
 }
@@ -167,7 +169,7 @@ void Camera::requestDownloadFile(const CameraFileRef& file, const fs::path& dest
     if (!fs::exists(destinationFolderPath)) {
         bool status = fs::create_directories(destinationFolderPath);
         if (!status) {
-            console() << "ERROR - failed to create destination folder path '" << destinationFolderPath << "'" << std::endl;
+            CI_LOG_E("failed to create destination folder path " + destinationFolderPath.string());
             return callback(EDS_ERR_INTERNAL_ERROR, "");
         }
     }
@@ -177,19 +179,19 @@ void Camera::requestDownloadFile(const CameraFileRef& file, const fs::path& dest
     EdsStreamRef stream = NULL;
     EdsError error = EdsCreateFileStream(filePath.generic_string().c_str(), kEdsFileCreateDisposition_CreateAlways, kEdsAccess_ReadWrite, &stream);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to create file stream" << std::endl;
+        CI_LOG_E("failed to create file stream");
         goto download_cleanup;
     }
 
     error = EdsDownload(file->mDirectoryItem, file->getSize(), stream);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to download" << std::endl;
+        CI_LOG_E("failed to download");
         goto download_cleanup;
     }
 
     error = EdsDownloadComplete(file->mDirectoryItem);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to mark download as complete" << std::endl;
+        CI_LOG_E("failed to mark download as complete");
         goto download_cleanup;
     }
 
@@ -208,33 +210,33 @@ void Camera::requestReadFile(const CameraFileRef& file, const std::function<void
     EdsStreamRef stream = NULL;
     EdsError error = EdsCreateMemoryStream(0, &stream);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to create memory stream" << std::endl;
+        CI_LOG_E("failed to create memory stream");
         goto read_cleanup;
     }
 
     error = EdsDownload(file->mDirectoryItem, file->getSize(), stream);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to download" << std::endl;
+        CI_LOG_E("failed to download");
         goto read_cleanup;
     }
 
     error = EdsDownloadComplete(file->mDirectoryItem);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to mark download as complete" << std::endl;
+        CI_LOG_E("failed to mark download as complete");
         goto read_cleanup;
     }
 
     void* data;
     error = EdsGetPointer(stream, (EdsVoid**)&data);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to get pointer from stream" << std::endl;
+        CI_LOG_E("failed to get pointer from stream");
         goto read_cleanup;
     }
 
     EdsUInt32 length;
     error = EdsGetLength(stream, &length);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to get stream length" << std::endl;
+        CI_LOG_E("failed to get stream length");
         goto read_cleanup;
     }
 
@@ -260,7 +262,7 @@ EdsError Camera::requestStartLiveView() {
     EdsUInt32 device;
     EdsError error = EdsGetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to get output device for Live View" << std::endl;
+        CI_LOG_E("failed to get output device for Live View");
         return error;
     }
 
@@ -268,7 +270,7 @@ EdsError Camera::requestStartLiveView() {
     device |= kEdsEvfOutputDevice_PC;
     error = EdsSetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to set output device to connect PC to Live View output device" << std::endl;
+        CI_LOG_E("failed to set output device to connect PC to Live View output device");
         return error;
     }
 
@@ -285,7 +287,7 @@ EdsError Camera::requestStopLiveView() {
     EdsUInt32 device;
     EdsError error = EdsGetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0, sizeof(device), &device);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to get output device for Live View" << std::endl;
+        CI_LOG_E("failed to get output device for Live View");
         return error;
     }
 
@@ -293,7 +295,7 @@ EdsError Camera::requestStopLiveView() {
     device &= ~kEdsEvfOutputDevice_PC;
     error = EdsSetPropertyData(mCamera, kEdsPropID_Evf_OutputDevice, 0 , sizeof(device), &device);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to set output device to disconnect PC from Live View output device" << std::endl;
+        CI_LOG_E("failed to set output device to disconnect PC from Live View output device");
         return error;
     }
 
@@ -324,22 +326,22 @@ void Camera::requestLiveViewImage(const std::function<void(EdsError error, Surfa
 
     error = EdsCreateMemoryStream(0, &stream);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to create memory stream" << std::endl;
+        CI_LOG_E("failed to create memory stream");
         goto cleanup;
     }
 
     error = EdsCreateEvfImageRef(stream, &evfImage);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to create Evf image" << std::endl;
+        CI_LOG_E("failed to create Evf image");
         goto cleanup;
     }
 
     error = EdsDownloadEvfImage(mCamera, evfImage);
     if (error != EDS_ERR_OK) {
         if (error == EDS_ERR_OBJECT_NOTREADY) {
-            console() << "ERROR - failed to download Evf image, not ready yet" << std::endl;
+            CI_LOG_E("failed to download Evf image, not ready yet");
         } else {
-            console() << "ERROR - failed to download Evf image" << std::endl;
+            CI_LOG_E("failed to download Evf image");
         }
         goto cleanup;
     }
@@ -347,7 +349,7 @@ void Camera::requestLiveViewImage(const std::function<void(EdsError error, Surfa
     EdsUInt32 length;
     error = EdsGetLength(stream, &length);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to get Evf image length" << std::endl;
+        CI_LOG_E("failed to get Evf image length");
         goto cleanup;
     }
     if (length == 0) {
@@ -357,7 +359,7 @@ void Camera::requestLiveViewImage(const std::function<void(EdsError error, Surfa
     void* data;
     error = EdsGetPointer(stream, (EdsVoid**)&data);
     if (error != EDS_ERR_OK) {
-        console() << "ERROR - failed to get pointer from stream" << std::endl;
+        CI_LOG_E("failed to get pointer from stream");
         goto cleanup;
     }
 
@@ -408,9 +410,9 @@ EdsError EDSCALLBACK Camera::handleObjectEvent(EdsUInt32 event, EdsBaseRef ref, 
 }
 
 EdsError EDSCALLBACK Camera::handlePropertyEvent(EdsUInt32 event, EdsUInt32 propertyID, EdsUInt32 param, EdsVoid* context) {
-    if (propertyID == kEdsPropID_Evf_OutputDevice && event == kEdsPropertyEvent_PropertyChanged) {
-//        console() << "output device changed, Live View possibly ready" << std::endl;
-    }
+//    if (propertyID == kEdsPropID_Evf_OutputDevice && event == kEdsPropertyEvent_PropertyChanged) {
+//        CI_LOG_V("output device changed, Live View possibly ready");
+//    }
     return EDS_ERR_OK;
 }
 
@@ -422,7 +424,7 @@ EdsError EDSCALLBACK Camera::handleStateEvent(EdsUInt32 event, EdsUInt32 param, 
             if (camera->mHasOpenSession && camera->mShouldKeepAlive) {
                 EdsError error = EdsSendCommand(camera->mCamera, kEdsCameraCommand_ExtendShutDownTimer, 0);
                 if (error != EDS_ERR_OK) {
-                    console() << "ERROR - failed to extend shut down timer" << std::endl;
+                    CI_LOG_E("failed to extend shut down timer");
                 }
             }
             break;
